@@ -30,14 +30,9 @@ def main():
     This will help drive the API design."""
                                         
     m = Message()
-    m.add(MY_NAME)
-    #m.add("dob", None, 19801231)
-         
-    m.add(0x01, name='bytea')
-    m.add(0x02, name='byteb')
-    m.add(2**12, name='shorta')
-    m.add(2**16, name='inta')
-    m.add(10L, name='long1')
+    m.add("name", MY_NAME)
+    m.add("dob", None, 19801231)
+
     e = Envelope(m) 
     
     print "Message:"
