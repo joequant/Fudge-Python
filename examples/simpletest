@@ -21,12 +21,9 @@
 import cStringIO
 
 from fudge.message import Message, Envelope
-from fudge.registry import *
-                
+               
 MY_NAME = u"Some random person" 
- 
-REGISTRY=Registry()
- 
+  
 def main(): 
     """A Simple example of how to use Fudge.
     
@@ -36,9 +33,8 @@ def main():
     m.add(MY_NAME)
     #m.add("dob", None, 19801231)
          
-    byteType = REGISTRY.type_by_id(BYTE_TYPE_ID)
-    m.add(0x01, name='bytea', type_=byteType)
-    m.add(0x02, name='byteb', class_=int)
+    m.add(0x01, name='bytea')
+    m.add(0x02, name='byteb')
     m.add(2**12, name='shorta')
     m.add(2**16, name='inta')
     m.add(10L, name='long1')
