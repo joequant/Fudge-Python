@@ -17,11 +17,13 @@
 # specific language governing permissions and limitations
 # under the License.
 #
- 
+                
+import cStringIO
+
 from fudge.message import Message, Envelope
 from fudge.registry import *
-
-MY_NAME = "Some random person" 
+                
+MY_NAME = u"Some random person" 
  
 REGISTRY=Registry()
  
@@ -31,18 +33,24 @@ def main():
     This will help drive the API design."""
                                         
     m = Message()
-    #m.add("name", None, MY_NAME)
+    m.add(MY_NAME)
     #m.add("dob", None, 19801231)
          
     byteType = REGISTRY.type_by_id(BYTE_TYPE_ID)
     m.add(0x01, name='bytea', type_=byteType)
     m.add(0x02, name='byteb', class_=int)
+    m.add(2**12, name='shorta')
+    m.add(2**16, name='inta')
+    m.add(10L, name='long1')
     e = Envelope(m) 
     
     print "Message:"
     print "  %s"%m.fields
     
-    bytes = e.encode()
+    writer = cStringIO.StringIO()
+    e.encode(writer)
+    bytes = writer.getvalue()
+    
     print "Encoded:"
     print "  %s"%repr(bytes)
     

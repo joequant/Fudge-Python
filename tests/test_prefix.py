@@ -1,4 +1,3 @@
-# encoding: utf-8
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements. See the NOTICE file
@@ -30,8 +29,8 @@ class FieldPrefixTests(unittest.TestCase):
     def testCreate(self):
         p = FieldPrefix(0x98)  # fixed, ordinal, name
         self.assertTrue(p.fixedwidth)
-        self.assertTrue(p.ordinal)
-        self.assertTrue(p.name)
+        self.assertTrue(p.has_ordinal)
+        self.assertTrue(p.has_name)
         self.assertEquals(0, p.variablewidth) 
         
         byte = p.encode()                                   

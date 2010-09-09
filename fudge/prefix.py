@@ -1,4 +1,3 @@
-# encoding: utf-8
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements. See the NOTICE file
@@ -18,23 +17,23 @@
 # under the License.
 #
 
-def decode(byte):
+def decode_prefix(byte):
    fixedwidth = (byte & 0x80) != 0
-   name = (byte & 0x08) != 0
-   ordinal = (byte & 0x10) != 0
+   has_name = (byte & 0x08) != 0
+   has_ordinal = (byte & 0x10) != 0
    variablewidth = (byte & 0x60) >>5
    if variablewidth == 3:
        variablewidth = 4
-   return (fixedwidth, variablewidth, ordinal, name) 
+   return (fixedwidth, variablewidth, has_ordinal, has_name) 
  
    
-def encode(fixedwidth, variablewidth, ordinal, name):
+def encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name):
    byte = 0x00
    if fixedwidth:
        byte = byte | 0x80
-   if name:
+   if has_name:
        byte = byte | 0x08
-   if ordinal:
+   if has_ordinal:
        byte = byte | 0x10
    if variablewidth > 0:
        if variablewidth == 4:
@@ -44,16 +43,24 @@ def encode(fixedwidth, variablewidth, ordinal, name):
        byte = byte | varwidth << 5
    return byte
 
+def calculate_variable_width(length):
+    if length <= 255:
+        return 1
+    elif length < 2**15 -1 :
+        return 2
+    else:
+        return 4
+    
 class FieldPrefix:
     def __init__(self, byte):
-        (self.fixedwidth, self.variablewidth, self.ordinal, self.name) = \
-            decode(byte)
+        (self.fixedwidth, self.variablewidth, self.has_ordinal, self.has_name) = \
+            decode_prefix(byte)
     
     def _repr__(self):
-        return "Prefix(%r, %r, %r, %r)"% \
-          (self.fixedwidth, self.variablewidth, self.ordinal, self.name)
+        return "Prefix[fixedwidth=%r, variable=%r, has_ordinal=%r, has_name=%r]"% \
+          (self.fixedwidth, self.variablewidth, self.has_ordinal, self.has_name)
     
     def encode(self):
-        return encode(self.fixedwidth, self.variablewidth, self.ordinal, self.name)
+        return encode_prefix(self.fixedwidth, self.variablewidth, self.has_ordinal, self.has_name)
 
        

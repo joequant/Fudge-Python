@@ -1,4 +1,3 @@
-# encoding: utf-8
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements. See the NOTICE file
@@ -19,6 +18,7 @@
 #
 
 import unittest
+import cStringIO
 
 from fudge.message import Envelope, Message
 
@@ -27,11 +27,13 @@ class codecsTests(unittest.TestCase):
         pass
 
     def testEmptyMessage(self):
+         output = cStringIO.StringIO()
+         
          empty = Envelope(Message())
                            
-         bytes = empty.encode()
+         empty.encode(output)
                  
-         self.assertEquals("\x00\x00\x00\x00\x00\x00\x00\x08", bytes)  
+         self.assertEquals("\x00\x00\x00\x00\x00\x00\x00\x08", output.getvalue())  
          
 if __name__ == '__main__':
     unittest.main()

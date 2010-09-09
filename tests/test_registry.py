@@ -26,5 +26,5 @@ class testRegistry(unittest.TestCase):
     def setUp(self):
         pass
 
-     def testNarrow(self):
-         pass
+    def testNarrow(self):
+        pass
