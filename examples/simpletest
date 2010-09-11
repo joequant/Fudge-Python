@@ -22,7 +22,7 @@ import cStringIO
 
 from fudge.message import Message, Envelope
                
-MY_NAME = u"Some random person" 
+MY_NAME = u"Some Random Person" 
   
 def main(): 
     """A Simple example of how to use Fudge.
@@ -30,13 +30,18 @@ def main():
     This will help drive the API design."""
                                         
     m = Message()
-    m.add("name", MY_NAME)
-    m.add("dob", None, 19801231)
-
+     
+    m.add(MY_NAME, name="name")
+    m.add(19801231L, ordinal=4, name="dob" )
+    m.add(10, ordinal=32, name="mark a")
+    m.add(20, ordinal=33, name="mark b")
+    m.add(30, ordinal=34,name="mark c")
+    
     e = Envelope(m) 
     
     print "Message:"
-    print "  %s"%m.fields
+    for f in m.fields:
+        print "  %s"% f
     
     writer = cStringIO.StringIO()
     e.encode(writer)
@@ -50,7 +55,9 @@ def main():
     print "  Directives : %d"%f.directives
     print "  Schema Version : %d"%f.schema_version
     print "  Taxonomy : %d"%f.taxonomy
-    print "  Message: %s"%m 
+    print "Message:"  
+    for f in m.fields:
+        print "  %s"%f
     
 if __name__ == '__main__':
     main()

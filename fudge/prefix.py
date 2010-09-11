@@ -24,7 +24,7 @@ def decode_prefix(byte):
    variablewidth = (byte & 0x60) >>5
    if variablewidth == 3:
        variablewidth = 4
-   return (fixedwidth, variablewidth, has_ordinal, has_name) 
+   return fixedwidth, variablewidth, has_ordinal, has_name 
  
    
 def encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name):
@@ -51,7 +51,7 @@ def calculate_variable_width(length):
     else:
         return 4
     
-class FieldPrefix:
+class FieldPrefix(object):
     def __init__(self, byte):
         (self.fixedwidth, self.variablewidth, self.has_ordinal, self.has_name) = \
             decode_prefix(byte)

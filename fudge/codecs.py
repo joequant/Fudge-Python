@@ -56,3 +56,49 @@ def enc_double(d):
 def enc_unicode(s):
     """encode a single unicode string"""
     return s
+
+def enc_name(s):
+    """encode a single name string"""
+    return struct.pack("!B", len(s)) + s
+
+def _unpack(format, bytes):
+    n = struct.calcsize(format)
+    return struct.unpack(format, bytes[:n])[0]
+
+def dec_bool(bytes):
+    """Decode a single boolean"""
+    byte = dec_byte(bytes)
+    return byte == 1
+        
+def dec_byte(bytes):
+    """Decode a single unsigned byte"""
+    return _unpack('!B', bytes) 
+
+def dec_short(bytes):
+    """Decode a single signed short"""
+    return _unpack('!h', bytes) 
+
+def dec_int(bytes):
+    """Decode a single signed int"""
+    return _unpack('!l', bytes)  
+    
+def dec_long(bytes):
+    """Decode a single signed long"""
+    return _unpack('!q', bytes) 
+    
+def dec_float(bytes):
+    """Decode a single signed float"""
+    return _unpack('!f', bytes) 
+
+def dec_double(bytes):
+    """Decode a single signed double"""
+    return _unpack('!d', bytes) 
+    
+def dec_unicode(bytes):
+    """Decode a single unicode string"""
+    return unicode(bytes) 
+        
+def dec_name(bytes):
+    """Decode a name from field prefix string"""
+    length = ord(bytes[0])
+    return unicode(bytes[1:length+1])
