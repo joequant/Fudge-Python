@@ -61,6 +61,24 @@ class codecsTests(unittest.TestCase):
 
         self.assertEquals(utils.MIN_LONG, dec_long(enc_long(utils.MIN_LONG)))
         self.assertEquals(utils.MAX_LONG, dec_long(enc_long(utils.MAX_LONG)))
+
+    def test_float(self): 
+        ONE_HEX = str(bytearray.fromhex(u'3f800000'))
+        TWO_HEX = str(bytearray.fromhex(u'40000000'))
+        
+        self.assertEquals(ONE_HEX, enc_float(1.0)) 
+        self.assertEquals(1.0, dec_float(ONE_HEX))
+
+        self.assertEquals(2.0, dec_float(enc_float(2.0)))
+
+    def test_double(self): 
+        ONE_HEX = str(bytearray.fromhex(u'3ff0000000000000'))
+        TWO_HEX = str(bytearray.fromhex(u'4000000000000000'))
+
+        self.assertEquals(ONE_HEX, enc_double(1.0)) 
+        self.assertEquals(1.0, dec_double(ONE_HEX))
+
+        self.assertEquals(2.0, dec_double(enc_double(2.0)))
  
     def test_name(self):  
         self.assertEquals('\x00', enc_name(''))

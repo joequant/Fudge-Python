@@ -57,10 +57,6 @@ def enc_unicode(s):
     """encode a single unicode string"""
     return s
 
-def enc_name(s):
-    """encode a single name string"""
-    return struct.pack("!B", len(s)) + s
-
 def _unpack(format, bytes):
     n = struct.calcsize(format)
     return struct.unpack(format, bytes[:n])[0]
@@ -97,8 +93,15 @@ def dec_double(bytes):
 def dec_unicode(bytes):
     """Decode a single unicode string"""
     return unicode(bytes) 
-        
+
+# Header helpers       
+
+def enc_name(s):
+    """encode a single name string"""
+    return struct.pack("!B", len(s)) + s
+ 
 def dec_name(bytes):
     """Decode a name from field prefix string"""
     length = ord(bytes[0])
-    return unicode(bytes[1:length+1])
+    return unicode(bytes[1:length+1]) 
+    
