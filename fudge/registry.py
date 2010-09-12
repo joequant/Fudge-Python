@@ -27,8 +27,22 @@ BYTE_TYPE_ID = 2
 SHORT_TYPE_ID = 3
 INT_TYPE_ID = 4
 LONG_TYPE_ID = 5
-  
+BYTEARRAY_TYPE_ID = 6 
+
+FLOAT_TYPE_ID = 10
+DOUBLE_TYPE_ID = 11
 STRING_TYPE_ID = 14
+
+BYTEARRAY4_TYPE_ID = 17
+BYTEARRAY8_TYPE_ID = 18
+BYTEARRAY16_TYPE_ID = 19
+BYTEARRAY20_TYPE_ID = 20
+BYTEARRAY32_TYPE_ID = 21
+BYTEARRAY64_TYPE_ID = 22
+BYTEARRAY128_TYPE_ID = 23
+BYTEARRAY256_TYPE_ID = 24
+BYTEARRAY512_TYPE_ID = 25
+
 
 class UnknownType(Exception): pass
     
@@ -79,22 +93,55 @@ class Registry(object):
         self._add(FieldType(INDICATOR_TYPE_ID, None, False, 0))
         self._add(FieldType(BOOLEAN_TYPE_ID, bool, False, 1, codecs.enc_bool, codecs.dec_bool))
         self._add(FieldType(BYTE_TYPE_ID, int, False, 1, codecs.enc_byte, codecs.dec_byte))
-        self._add(FieldType(SHORT_TYPE_ID, int, False, 2, codecs.enc_short, codecs.dec_short))  
-        self._add(FieldType(INT_TYPE_ID, int, False, 4, codecs.enc_int, codecs.dec_int))  
-        self._add(FieldType(LONG_TYPE_ID, long, False, 8, codecs.enc_long, codecs.dec_long))  
+        self._add(FieldType(SHORT_TYPE_ID, int, False, 2, codecs.enc_short, codecs.dec_short))
+        self._add(FieldType(INT_TYPE_ID, int, False, 4, codecs.enc_int, codecs.dec_int))
+        self._add(FieldType(LONG_TYPE_ID, long, False, 8, codecs.enc_long, codecs.dec_long))
+        self._add(FieldType(BYTEARRAY_TYPE_ID, str, True, 0, \
+                codecs.enc_str, codecs.dec_str, types.size_str))
+
+        self._add(FieldType(FLOAT_TYPE_ID, float, False, 4, codecs.enc_float, codecs.dec_float))
+        self._add(FieldType(DOUBLE_TYPE_ID, float, False, 8, codecs.enc_double, codecs.dec_double))
         
-        self._add(FieldType(STRING_TYPE_ID, unicode, True, 0, codecs.enc_unicode, codecs.dec_unicode, types.size_unicode))  
+        self._add(FieldType(STRING_TYPE_ID, unicode, True, 0, \
+                codecs.enc_unicode, codecs.dec_unicode, types.size_unicode))
+
+        self._add(FieldType(BYTEARRAY4_TYPE_ID, str, False, 4, codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY8_TYPE_ID, str, False, 8, codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY16_TYPE_ID, str, False, 16, codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY20_TYPE_ID, str, False, 20, codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY32_TYPE_ID, str, False, 32, codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY64_TYPE_ID, str, False, 64, codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY128_TYPE_ID, str, False, 128, codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY256_TYPE_ID, str, False, 256, codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY512_TYPE_ID, str, False, 512, codecs.enc_str, codecs.dec_str))
+
         
         self.NARROWERS = {
             BYTE_TYPE_ID: self._narrow_int,
             SHORT_TYPE_ID: self._narrow_int,
             INT_TYPE_ID: self._narrow_int, 
             LONG_TYPE_ID: self._narrow_int,
+            
+            BYTEARRAY_TYPE_ID: self._narrow_str,
+            BYTEARRAY4_TYPE_ID: self._narrow_str,
+            BYTEARRAY8_TYPE_ID: self._narrow_str,
+            BYTEARRAY16_TYPE_ID: self._narrow_str,
+            BYTEARRAY20_TYPE_ID: self._narrow_str,
+            BYTEARRAY32_TYPE_ID: self._narrow_str,
+            BYTEARRAY64_TYPE_ID: self._narrow_str,
+            BYTEARRAY128_TYPE_ID: self._narrow_str,
+            BYTEARRAY256_TYPE_ID: self._narrow_str,
+            BYTEARRAY512_TYPE_ID: self._narrow_str,
+            
         }
-        
+     
+    def __getitem__(self, key):
+        return self.types_by_id[key]
+           
     def _add(self, field_type):
         self.types_by_id[field_type.type_id] = field_type 
-        self.types_by_class[field_type.class_] = field_type 
+        if field_type.class_:
+            self.types_by_class[field_type.class_] = field_type 
     
     def type_by_id(self, type_id):
         """Given a type_id return the Fudge FieldType which 
@@ -142,13 +189,36 @@ class Registry(object):
      
     def _narrow_int(self, value):
         if value >= utils.MIN_BYTE and value <= utils.MAX_BYTE:
-            return self.types_by_id[BYTE_TYPE_ID]
+            return self[BYTE_TYPE_ID]
         elif value >= utils.MIN_SHORT and value <= utils.MAX_SHORT:
-            return self.types_by_id[SHORT_TYPE_ID]
+            return self[SHORT_TYPE_ID]
         elif value >= utils.MIN_INT and value <= utils.MAX_INT:
-            return self.types_by_id[INT_TYPE_ID]
+            return self[INT_TYPE_ID]
         else: 
-            return  self.types_by_id[LONG_TYPE_ID]
+            return  self[LONG_TYPE_ID]
  
-
+    def _narrow_str(self, value): 
+        array_len = len(value)
+        if array_len <= 4:
+            return self[BYTEARRAY4_TYPE_ID]
+        elif array_len <= 8:
+            return self[BYTEARRAY8_TYPE_ID]
+        elif array_len <= 16:
+            return self[BYTEARRAY16_TYPE_ID]
+        elif array_len <= 20:
+            return self[BYTEARRAY20_TYPE_ID]
+        elif array_len <= 32:
+            return self[BYTEARRAY32_TYPE_ID]
+        elif array_len <= 64:
+            return self[BYTEARRAY64_TYPE_ID]
+        elif array_len <= 128:
+            return self[BYTEARRAY128_TYPE_ID]
+        elif array_len <= 256:
+            return self[BYTEARRAY256_TYPE_ID]
+        elif array_len <= 512:
+            return self[BYTEARRAY512_TYPE_ID]
+        return self[BYTEARRAY_TYPE_ID]
+        
+            
+            
 DEFAULT_REGISTRY = Registry()

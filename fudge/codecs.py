@@ -57,6 +57,9 @@ def enc_unicode(s):
     """encode a single unicode string"""
     return s
 
+def enc_str(b):
+    return b
+    
 def _unpack(format, bytes):
     n = struct.calcsize(format)
     return struct.unpack(format, bytes[:n])[0]
@@ -94,6 +97,9 @@ def dec_unicode(bytes):
     """Decode a single unicode string"""
     return unicode(bytes) 
 
+def dec_str(bytes):
+    return str(bytes)
+    
 # Header helpers       
 
 def enc_name(s):

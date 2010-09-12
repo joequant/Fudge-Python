@@ -31,7 +31,6 @@ HEADER_PACKING="!BBhl"
 
 REGISTRY = registry.DEFAULT_REGISTRY
 
-
 class Message(object):
     def __init__(self):
         self.fields = []

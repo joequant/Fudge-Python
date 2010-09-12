@@ -24,3 +24,8 @@
 def size_unicode(s):
     """Calculate the size of a unicode string"""
     return len(s)
+    
+def size_str(b):
+    """Return the size of a bytestring"""  
+    return len(b)
+

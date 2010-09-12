@@ -108,7 +108,7 @@ class Field:
         # prefix
         fixedwidth, variablewidth, has_ordinal, has_name = prefix.decode_prefix(ord(bytes[0]))
         id = ord(bytes[1])
-        field_type = REGISTRY.type_by_id(id)
+        field_type = REGISTRY[id]
         size = 2
         
         # ordinal
