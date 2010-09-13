@@ -23,7 +23,7 @@
 
 def size_unicode(s):
     """Calculate the size of a unicode string"""
-    return len(s)
+    return len(s.encode('utf-8'))
     
 def size_str(b):
     """Return the size of a bytestring"""  

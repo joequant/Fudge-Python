@@ -20,14 +20,20 @@
 #
              
 import struct
+
+import fudge
             
 """A bunch of encode/decode routines for types."""
 
+def enc_indicator(i):
+    return ''
+    
 def enc_bool(b):
     """Encode a boolean as either a \0x00 or \0x01"""
-    if b:
-        return '\x01'
-    return '\x00'
+    return struct.pack('!?', b)
+    #if b:
+    #    return '\x01'
+    #return '\x00'
                 
 def enc_byte(b):                                  
     """encode a single unsignd byte"""
@@ -55,20 +61,25 @@ def enc_double(d):
     
 def enc_unicode(s):
     """encode a single unicode string"""
-    return s
-
+    utf8 = s.encode("utf-8")
+    format = "!%ss"%len(utf8)
+    return struct.pack(format, utf8)
+    
 def enc_str(b):
     return b
     
 def _unpack(format, bytes):
     n = struct.calcsize(format)
     return struct.unpack(format, bytes[:n])[0]
-
+ 
+def dec_indicator(bytes):
+    assert len(bytes) == 0
+    return fudge.INDICATOR
+    
 def dec_bool(bytes):
     """Decode a single boolean"""
-    byte = dec_byte(bytes)
-    return byte == 1
-        
+    return _unpack('!?', bytes)
+
 def dec_byte(bytes):
     """Decode a single unsigned byte"""
     return _unpack('!B', bytes) 
@@ -95,7 +106,9 @@ def dec_double(bytes):
     
 def dec_unicode(bytes):
     """Decode a single unicode string"""
-    return unicode(bytes) 
+    format = '!%ss'%len(bytes)
+    s = struct.unpack(format, bytes)[0]
+    return unicode(s, "utf-8") 
 
 def dec_str(bytes):
     return str(bytes)
@@ -110,4 +123,25 @@ def dec_name(bytes):
     """Decode a name from field prefix string"""
     length = ord(bytes[0])
     return unicode(bytes[1:length+1]) 
+ 
+# Arrays
+def enc_array(encode_fn, a):
+    """Encode an array, usually of numbers.  We use a type \ 
+    specific encode function"""  
+    
+    # TODO(jamesc) - Slow but correct...        
+    out = ''
+    for val in a:
+        out = out + encode_fn(val)
+    return out  
+    
+def dec_array(decode_fn, width, bytes):
+    assert len(bytes)%width == 0
+    
+    out = []
+    num_elements = len(bytes)/width
+    for val in range(0, num_elements):
+        out.append(decode_fn(bytes[val*width:val*width+width]))
+    return out
+    
     

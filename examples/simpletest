@@ -43,6 +43,7 @@ def main():
     m.add(2.0, ordinal=64, name=u"average a", type_=FLOAT_TYPE)
     m.add(1.0, ordinal=65, name=u"average b", type_=FLOAT_TYPE) 
     m.add(str('\x00\x01\x02\x03\x04'), name=u"bar", type_=BYTEARRAY_TYPE)
+    m.add(str('\x00\x01\x02\x03'), name=u"bar2", type_=BYTEARRAY_TYPE)
     e = Envelope(m) 
     
     print "Message:"

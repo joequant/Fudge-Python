@@ -30,7 +30,7 @@ class testRegistry(unittest.TestCase):
 
     def setUp(self):
         self.reg = Registry() 
-        self.BYTE_TYPE = self.reg.type_by_id(BYTE_TYPE_ID)
+        self.BYTE_TYPE = self.reg[BYTE_TYPE_ID]
         self.SHORT_TYPE = self.reg.type_by_id(SHORT_TYPE_ID)
         self.INT_TYPE = self.reg.type_by_id(INT_TYPE_ID)
         self.LONG_TYPE = self.reg.type_by_id(LONG_TYPE_ID)
@@ -63,13 +63,15 @@ class testRegistry(unittest.TestCase):
         self.assertEquals(self.LONG_TYPE, self.reg.type_by_class(n, class_=long))
 
         s = str('foo')
-        self.assertEquals(s.__class__.__name__,'str')
+        self.assertEquals(s.__class__.__name__, 'str')
         self.assertEquals(self.STRING_TYPE, self.reg.type_by_class(s, class_=unicode))
+        
+        s = uuid.uuid1()
         try:
             self.reg.type_by_class(s) 
         except UnknownType:
             return
-        fail("Should have gotten UnknownType")
+        self.fail("Should have gotten UnknownType")
         
     def test_type_by_class_numbers(self):
         """All numbers map to INT or LONG (and then are narrowed)""" 
@@ -123,4 +125,14 @@ class testRegistry(unittest.TestCase):
 
     def test_narrow_int(self):                                                         
         self.assertEquals(self.LONG_TYPE, self.reg.narrow(self.LONG_TYPE, utils.MAX_LONG))
+
+    def test_narrow_str(self):
+        array = 'x'*4 
+        self.assertEquals(self.reg[BYTEARRAY4_TYPE_ID], self.reg.narrow(self.reg[BYTEARRAY_TYPE_ID], array))
+
+        array = 'x'*20
+        self.assertEquals(self.reg[BYTEARRAY20_TYPE_ID], self.reg.narrow(self.reg[BYTEARRAY_TYPE_ID], array))
+
+        array = 'x'*27
+        self.assertEquals(self.reg[BYTEARRAY_TYPE_ID], self.reg.narrow(self.reg[BYTEARRAY_TYPE_ID], array))
         

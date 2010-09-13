@@ -28,9 +28,13 @@ SHORT_TYPE_ID = 3
 INT_TYPE_ID = 4
 LONG_TYPE_ID = 5
 BYTEARRAY_TYPE_ID = 6 
-
+SHORTARRAY_TYPE_ID = 7
+INTARRAY_TYPE_ID = 8
+LONGARRAY_TYPE_ID = 9
 FLOAT_TYPE_ID = 10
-DOUBLE_TYPE_ID = 11
+DOUBLE_TYPE_ID = 11 
+FLOATARRAY_TYPE_ID = 12
+DOUBLEARRAY_TYPE_ID = 13
 STRING_TYPE_ID = 14
 
 BYTEARRAY4_TYPE_ID = 17
@@ -80,8 +84,8 @@ class FieldType(object):
               
     def __repr__(self):
         return "FieldType[id=%r, class=%r]"%(self.type_id, self.class_)
-        
-        
+
+
 class Registry(object):
     """A Fudge Type registry.
     
@@ -90,17 +94,40 @@ class Registry(object):
         self.types_by_id = {} 
         self.types_by_class = {}
 
-        self._add(FieldType(INDICATOR_TYPE_ID, None, False, 0))
+        self._add(FieldType(INDICATOR_TYPE_ID, None, False, 0, \
+                codecs.enc_indicator, codecs.dec_indicator, lambda x : 0))
+
         self._add(FieldType(BOOLEAN_TYPE_ID, bool, False, 1, codecs.enc_bool, codecs.dec_bool))
         self._add(FieldType(BYTE_TYPE_ID, int, False, 1, codecs.enc_byte, codecs.dec_byte))
         self._add(FieldType(SHORT_TYPE_ID, int, False, 2, codecs.enc_short, codecs.dec_short))
         self._add(FieldType(INT_TYPE_ID, int, False, 4, codecs.enc_int, codecs.dec_int))
         self._add(FieldType(LONG_TYPE_ID, long, False, 8, codecs.enc_long, codecs.dec_long))
+
         self._add(FieldType(BYTEARRAY_TYPE_ID, str, True, 0, \
                 codecs.enc_str, codecs.dec_str, types.size_str))
-
+        self._add(FieldType(SHORTARRAY_TYPE_ID, None, True, 0, \
+                lambda x : codecs.enc_array(codecs.enc_short, x), \
+                lambda x : codecs.dec_array(codecs.dec_short, 2, x), \
+                lambda x : 2 * len(x)))
+        self._add(FieldType(INTARRAY_TYPE_ID, None, True, 0, \
+                lambda x : codecs.enc_array(codecs.enc_int, x), \
+                lambda x : codecs.dec_array(codecs.dec_int, 4, x), \
+                lambda x : 4 * len(x)))
+        self._add(FieldType(LONGARRAY_TYPE_ID, None, True, 0, \
+                lambda x : codecs.enc_array(codecs.enc_long, x), \
+                lambda x : codecs.dec_array(codecs.dec_long, 8, x), \
+                lambda x : 8 * len(x)))
+                        
         self._add(FieldType(FLOAT_TYPE_ID, float, False, 4, codecs.enc_float, codecs.dec_float))
         self._add(FieldType(DOUBLE_TYPE_ID, float, False, 8, codecs.enc_double, codecs.dec_double))
+        self._add(FieldType(FLOATARRAY_TYPE_ID, None, True, 0, \
+                lambda x : codecs.enc_array(codecs.enc_float, x), \
+                lambda x : codecs.dec_array(codecs.dec_float, 4, x), \
+                lambda x : 4 * len(x)))
+        self._add(FieldType(INTARRAY_TYPE_ID, None, True, 0, \
+                lambda x : codecs.enc_array(codecs.enc_double, x), \
+                lambda x : codecs.dec_array(codecs.dec_double, 8, x), \
+                lambda x : 8 * len(x)))
         
         self._add(FieldType(STRING_TYPE_ID, unicode, True, 0, \
                 codecs.enc_unicode, codecs.dec_unicode, types.size_unicode))
@@ -198,25 +225,20 @@ class Registry(object):
             return  self[LONG_TYPE_ID]
  
     def _narrow_str(self, value): 
+        
+        FIXED_BYTELEN = { 4: self[BYTEARRAY4_TYPE_ID],
+                8: self[BYTEARRAY8_TYPE_ID],
+                16: self[BYTEARRAY16_TYPE_ID],
+                20: self[BYTEARRAY20_TYPE_ID],
+                32: self[BYTEARRAY32_TYPE_ID],
+                64:  self[BYTEARRAY64_TYPE_ID],
+                128:  self[BYTEARRAY128_TYPE_ID],
+                256: self[BYTEARRAY256_TYPE_ID],
+                512: self[BYTEARRAY512_TYPE_ID],
+            } 
         array_len = len(value)
-        if array_len <= 4:
-            return self[BYTEARRAY4_TYPE_ID]
-        elif array_len <= 8:
-            return self[BYTEARRAY8_TYPE_ID]
-        elif array_len <= 16:
-            return self[BYTEARRAY16_TYPE_ID]
-        elif array_len <= 20:
-            return self[BYTEARRAY20_TYPE_ID]
-        elif array_len <= 32:
-            return self[BYTEARRAY32_TYPE_ID]
-        elif array_len <= 64:
-            return self[BYTEARRAY64_TYPE_ID]
-        elif array_len <= 128:
-            return self[BYTEARRAY128_TYPE_ID]
-        elif array_len <= 256:
-            return self[BYTEARRAY256_TYPE_ID]
-        elif array_len <= 512:
-            return self[BYTEARRAY512_TYPE_ID]
+        if array_len in FIXED_BYTELEN:
+            return FIXED_BYTELEN[array_len]
         return self[BYTEARRAY_TYPE_ID]
         
             

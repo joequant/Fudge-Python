@@ -29,3 +29,14 @@ class testTypes(unittest.TestCase):
 
     def test_unicode(self):
         self.assertEquals(0, size_unicode(''))
+        
+        unicode_val = u'Ma\xf1ana' 
+        self.assertEquals(7, size_unicode(unicode_val)) 
+        
+        unicode_val = u'Ma\u00f1ana'
+        self.assertEquals(7, size_unicode(unicode_val)) 
+        
+    def test_str(self):
+        self.assertEquals(5, size_str('abcde')) 
+        self.assertEquals(0, size_str(''))
+        

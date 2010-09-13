@@ -20,13 +20,20 @@
 import unittest
 import cStringIO
  
-from fudge.codecs import *
+from fudge import INDICATOR
+from fudge.codecs import * 
+
 from fudge import utils
 
 class codecsTests(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_indicator(self):
+        self.assertEquals('', enc_indicator('')) 
+        self.assertEquals(INDICATOR, dec_indicator(''))
+        self.assertEquals(INDICATOR, dec_indicator(enc_indicator(INDICATOR))) 
+        
     def test_bool(self):
         self.assertEquals('\x00', enc_bool(False))
         self.assertEquals('\x01', enc_bool(True))
@@ -86,4 +93,23 @@ class codecsTests(unittest.TestCase):
         
         self.assertEquals('\x07abcdefg', enc_name('abcdefg'))
         self.assertEquals('abcdefg', dec_name(enc_name('abcdefg'))) 
+   
+    def test_unicode(self):
+        unicode_val = u'Ma\xf1ana'
         
+        self.assertEquals(6, len(unicode_val))
+        
+        self.assertEquals('Ma\xc3\xb1ana', enc_unicode(unicode_val))
+        self.assertEquals(7, len(enc_unicode(unicode_val))) 
+        
+        self.assertEquals(unicode_val, dec_unicode(enc_unicode(unicode_val))) 
+        
+        
+    def test_array(self):
+        val = [1, 4, 256]  
+        self.assertEquals('\x00\x01\x00\x04\x01\x00', enc_array(enc_short, val))
+        self.assertEquals(val, dec_array(dec_short, 2, '\x00\x01\x00\x04\x01\x00')) 
+        
+        # as int                                                                  
+        self.assertEquals('\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x01\x00', enc_array(enc_int, val))
+        self.assertEquals(val, dec_array(dec_int, 4, '\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x01\x00'))
