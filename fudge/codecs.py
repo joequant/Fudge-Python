@@ -21,7 +21,7 @@
              
 import struct
 
-import fudge
+from fudge import *
             
 """A bunch of encode/decode routines for types."""
 
@@ -74,7 +74,7 @@ def _unpack(format, bytes):
  
 def dec_indicator(bytes):
     assert len(bytes) == 0
-    return fudge.INDICATOR
+    return INDICATOR
     
 def dec_bool(bytes):
     """Decode a single boolean"""
