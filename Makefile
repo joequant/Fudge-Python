@@ -20,3 +20,7 @@
 
 test:
 	python ./setup.py nosetests
+
+clean:
+	rm -rf *.egg-info
+	find . -name \*.pyc |xargs rm
