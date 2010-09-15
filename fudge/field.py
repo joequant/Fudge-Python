@@ -28,16 +28,34 @@ from fudge import utils
 REGISTRY = registry.DEFAULT_REGISTRY
 
 class Field:
-    """A Concrete field suitable for including into Message""" 
+    """A Concrete field suitable for including into a Fudge Message""" 
     
     def __init__(self, type_, ordinal, name, value):
+        """Create a new Fudge field.
+        
+        Arguments:
+            type_ : FieldType
+            ordinal : short'
+            name : unicode string where len(name) < 255 
+            value : object
+        
+        """
         self.type_ = type_
         self.ordinal = ordinal
         self.name = name
         self.value = value
 
-    def size(self):
-        """Calculate the size that the field will take up in the message"""
+    def size(self, taxonomy = None):
+        """Calculate the size that the field will take up in the message.
+        
+        Arguments:
+             taxonomy: A Taxomomy to be used for replacing names with ordinals.
+                 (Default : none)
+                 
+        Returns:
+             The size in bytes required to encode this field
+
+        """
         size = 2 # prefix
         if self.ordinal:
             size = size + 2
@@ -49,7 +67,7 @@ class Field:
         if self.type_.is_variable_sized: 
             # We store a variable sized length and then the value itself
             value_size = self.type_.calc_size(self.value)
-            size = size + bytes_for_var_size(value_size) + value_size
+            size = size + bytes_for_value_length(value_size) + value_size
         else:
             size = size + self.type_.fixed_size
         return size
@@ -65,14 +83,15 @@ class Field:
     def encode(self, writer):
         """Encode a Field.
 
-        This encodes Field Prefix, Type, Ordinal, Name, Data
+        This encodes Field Prefix, Type, Ordinal, Name, Data 
+        
         """
         fixed_width = True
         variable_width = 0
         if self.type_.is_variable_sized:
             fixed_width = False 
             value_length = self.type_.calc_size(self.value)
-            variable_width = bytes_for_var_size(value_length)
+            variable_width = bytes_for_value_length(value_length)
             
 
         writer.write(chr(prefix.encode_prefix(fixed_width, variable_width, \
@@ -95,13 +114,15 @@ class Field:
         """Decode a field from a byte array.
         
         Returns:
-          (field, num_read).
+            (field, num_read).
           
-          field: the field read from the byte array
-          num_read: number of bytes this field took up
+            field: the field read from the byte array
+            num_read: number of bytes this field took up
           
         Raises:
-          Error: if there is not enough bytes in the array for the field."""
+            Error: if there is not enough bytes in the array for the field.
+            
+        """
         
         assert len(bytes) > 2
         
@@ -129,22 +150,41 @@ class Field:
             value = field_type.decoder(bytes[size:])
             size = size + field_type.fixed_size
         else:
-            value_length = calc_length(bytes[size:], variablewidth) 
+            value_length = decode_value_length(bytes[size:], variablewidth) 
             value = field_type.decoder(bytes[size+1:size+value_length+1])
-            size = size + value_length + bytes_for_var_size(value_length)
+            size = size + value_length + bytes_for_value_length(value_length)
             
         field = Field(field_type, ordinal, name, value)
         return field, size
 
-def bytes_for_var_size(var_size):
-    if var_size <= utils.MAX_BYTE:
+def bytes_for_value_length(value_length):  
+    """Given the length of a value return the min numbers of
+    bytes required to encode it.
+    
+    Arguments: 
+       value_length: The length of the value object in bytes
+       
+    Return:
+       Mimimum number of bytes required to hold this length
+       
+    """ 
+    if value_length <= utils.MAX_BYTE:
         return 1
-    elif var_size <= utils.MAX_SHORT:
+    elif value_length <= utils.MAX_SHORT:
         return 2
     else:
         return 4
 
 def encode_value_length(value_length, writer):
+    """Enocde the length of a value as a 
+    var_width length. This will be the smallest of 
+    a byte, short or int which can hold the length.
+    
+    Arguments:
+        value_length: the length in buytes of the value object
+        writer: the writer object to write the length to
+    
+    """
     if value_length <= utils.MAX_BYTE:
         writer.write(codecs.enc_byte(value_length)) 
     elif value_length <= utils.MAX_SHORT:
@@ -152,7 +192,18 @@ def encode_value_length(value_length, writer):
     else:
         writer.write(codecs.enc_int(value_length))
         
-def calc_length(bytes, width):
+def decode_value_length(bytes, width):
+    """Decode the length of a value from a 
+    var_width length. 
+    
+    Arguments:
+        bytes: The byte stream to read from
+        width:  The number of bytes to read (1, 2, 4)
+    
+    Return:
+        The decoded value length
+    
+    """
     if width == 1:
         return codecs.dec_byte(bytes[0])
     elif width == 2:
