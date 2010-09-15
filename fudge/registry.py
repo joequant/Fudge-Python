@@ -48,7 +48,8 @@ BYTEARRAY256_TYPE_ID = 24
 BYTEARRAY512_TYPE_ID = 25
 
 
-class UnknownType(Exception): pass
+class UnknownType(Exception): 
+    pass
     
 class FieldType(object):
     """"""
@@ -97,11 +98,16 @@ class Registry(object):
         self._add(FieldType(INDICATOR_TYPE_ID, None, False, 0, \
                 codecs.enc_indicator, codecs.dec_indicator, lambda x : 0))
 
-        self._add(FieldType(BOOLEAN_TYPE_ID, bool, False, 1, codecs.enc_bool, codecs.dec_bool))
-        self._add(FieldType(BYTE_TYPE_ID, int, False, 1, codecs.enc_byte, codecs.dec_byte))
-        self._add(FieldType(SHORT_TYPE_ID, int, False, 2, codecs.enc_short, codecs.dec_short))
-        self._add(FieldType(INT_TYPE_ID, int, False, 4, codecs.enc_int, codecs.dec_int))
-        self._add(FieldType(LONG_TYPE_ID, long, False, 8, codecs.enc_long, codecs.dec_long))
+        self._add(FieldType(BOOLEAN_TYPE_ID, bool, False, 1, \
+                codecs.enc_bool, codecs.dec_bool))
+        self._add(FieldType(BYTE_TYPE_ID, int, False, 1, \
+                codecs.enc_byte, codecs.dec_byte))
+        self._add(FieldType(SHORT_TYPE_ID, int, False, 2, \
+                codecs.enc_short, codecs.dec_short))
+        self._add(FieldType(INT_TYPE_ID, int, False, 4, \
+                codecs.enc_int, codecs.dec_int))
+        self._add(FieldType(LONG_TYPE_ID, long, False, 8, \
+                codecs.enc_long, codecs.dec_long))
 
         self._add(FieldType(BYTEARRAY_TYPE_ID, str, True, 0, \
                 codecs.enc_str, codecs.dec_str, types.size_str))
@@ -118,8 +124,10 @@ class Registry(object):
                 lambda x : codecs.dec_array(codecs.dec_long, 8, x), \
                 lambda x : 8 * len(x)))
                         
-        self._add(FieldType(FLOAT_TYPE_ID, float, False, 4, codecs.enc_float, codecs.dec_float))
-        self._add(FieldType(DOUBLE_TYPE_ID, float, False, 8, codecs.enc_double, codecs.dec_double))
+        self._add(FieldType(FLOAT_TYPE_ID, float, False, 4, \
+                codecs.enc_float, codecs.dec_float))
+        self._add(FieldType(DOUBLE_TYPE_ID, float, False, 8, \
+                codecs.enc_double, codecs.dec_double))
         self._add(FieldType(FLOATARRAY_TYPE_ID, None, True, 0, \
                 lambda x : codecs.enc_array(codecs.enc_float, x), \
                 lambda x : codecs.dec_array(codecs.dec_float, 4, x), \
@@ -132,18 +140,27 @@ class Registry(object):
         self._add(FieldType(STRING_TYPE_ID, unicode, True, 0, \
                 codecs.enc_unicode, codecs.dec_unicode, types.size_unicode))
 
-        self._add(FieldType(BYTEARRAY4_TYPE_ID, str, False, 4, codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY8_TYPE_ID, str, False, 8, codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY16_TYPE_ID, str, False, 16, codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY20_TYPE_ID, str, False, 20, codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY32_TYPE_ID, str, False, 32, codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY64_TYPE_ID, str, False, 64, codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY128_TYPE_ID, str, False, 128, codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY256_TYPE_ID, str, False, 256, codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY512_TYPE_ID, str, False, 512, codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY4_TYPE_ID, str, False, 4, \
+                codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY8_TYPE_ID, str, False, 8, \
+                codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY16_TYPE_ID, str, False, 16, \
+                codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY20_TYPE_ID, str, False, 20, \
+                codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY32_TYPE_ID, str, False, 32, \
+                codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY64_TYPE_ID, str, False, 64, \
+                codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY128_TYPE_ID, str, False, 128, \
+                codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY256_TYPE_ID, str, False, 256, \
+                codecs.enc_str, codecs.dec_str))
+        self._add(FieldType(BYTEARRAY512_TYPE_ID, str, False, 512, \
+                codecs.enc_str, codecs.dec_str))
 
         
-        self.NARROWERS = {
+        self._narrower_fns = {
             BYTE_TYPE_ID: self._narrow_int,
             SHORT_TYPE_ID: self._narrow_int,
             INT_TYPE_ID: self._narrow_int, 
@@ -210,9 +227,9 @@ class Registry(object):
     def narrow(self, type_, value):
         """Narrow a type if the value can fit into a smaller type."""  
         
-        if type_.type_id not in self.NARROWERS:
+        if type_.type_id not in self._narrower_fns:
             return type_
-        return self.NARROWERS[type_.type_id](value)
+        return self._narrower_fns[type_.type_id](value)
      
     def _narrow_int(self, value):
         if value >= utils.MIN_BYTE and value <= utils.MAX_BYTE:
@@ -226,7 +243,7 @@ class Registry(object):
  
     def _narrow_str(self, value): 
         
-        FIXED_BYTELEN = { 4: self[BYTEARRAY4_TYPE_ID],
+        fixed_bytelen = { 4: self[BYTEARRAY4_TYPE_ID],
                 8: self[BYTEARRAY8_TYPE_ID],
                 16: self[BYTEARRAY16_TYPE_ID],
                 20: self[BYTEARRAY20_TYPE_ID],
@@ -237,8 +254,8 @@ class Registry(object):
                 512: self[BYTEARRAY512_TYPE_ID],
             } 
         array_len = len(value)
-        if array_len in FIXED_BYTELEN:
-            return FIXED_BYTELEN[array_len]
+        if array_len in fixed_bytelen:
+            return fixed_bytelen[array_len]
         return self[BYTEARRAY_TYPE_ID]
         
             

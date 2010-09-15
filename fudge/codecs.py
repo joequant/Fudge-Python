@@ -83,6 +83,10 @@ def _unpack(fmt, encoded):
     return struct.unpack(fmt, encoded[:length])[0]
 
 def dec_indicator(encoded):
+    """decode a Fudge Indicator.
+    
+    Returns:
+       A Singleton INDICATOR object"""
     assert len(encoded) == 0
     return INDICATOR
 

@@ -29,7 +29,11 @@ HEADER_PACKING = "!BBhl"
 
 REGISTRY = registry.DEFAULT_REGISTRY
 
-class Message(object):
+class Message(object): 
+    """A Fudge Message.
+    
+    """
+    
     def __init__(self):
         self.fields = []
     
@@ -69,6 +73,10 @@ class Message(object):
         return message
          
 class Envelope(object):
+    """A Fudge envelope.
+    
+    This contains a message, and holds the metadata for the message (Schema
+    Version and Taxonomy used)"""
     def __init__(self, message, directives=0, schema_version=0, taxonomy=0):
         self.message = message
         self.schema_version = schema_version
