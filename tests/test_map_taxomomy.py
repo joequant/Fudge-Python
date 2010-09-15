@@ -1,4 +1,4 @@
-# 
+#
 # Copyright CERN, 2010.
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -21,7 +21,7 @@
 
 import unittest
 
-       
+
 from fudge.taxonomy.map import *
 
 class TestMapTaxomomy(unittest.TestCase):
@@ -30,11 +30,20 @@ class TestMapTaxomomy(unittest.TestCase):
         t = Taxonomy({ 1 : u'foo', 2 : u'bar'})
         self.assertEquals(u'foo', t.get_name(1))
         self.assertEquals(1, t.get_ordinal(u'foo'))
-        
+
         self.assertEquals(u'bar', t.get_name(2))
         self.assertEquals(2, t.get_ordinal(u'bar'))
-        
+
+        self.assertEquals(2, len(t))
+
     def test_not_exists(self):
         t = Taxonomy({1 : u'foo'})
-        
+
+        self.assertRaises(KeyError, t.get_name, 2)
+
+    def test_empty_map(self):
+        t = Taxonomy()
+
+        self.assertEquals(0, len(t))
+
         self.assertRaises(KeyError, t.get_name, 2)

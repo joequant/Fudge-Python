@@ -69,4 +69,8 @@ class Taxonomy(object):
         Raises:
             KeyError : If the name is not in the taxomomy"""      
         return self._by_name[name] 
+        
+    def __len__(self):
+        """Return the number of elements in the map.""" 
+        return len(self._by_ordinal)
        
