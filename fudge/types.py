@@ -21,11 +21,11 @@
 
 """Functions for working with types. """
 
-def size_unicode(s):
+def size_unicode(arg):
     """Calculate the size of a unicode string"""
-    return len(s.encode('utf-8'))
+    return len(arg.encode('utf-8'))
     
-def size_str(b):
+def size_str(arg):
     """Return the size of a bytestring"""  
-    return len(b)
+    return len(arg)
 

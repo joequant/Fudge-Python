@@ -24,3 +24,6 @@ test:
 clean:
 	rm -rf *.egg-info
 	find . -name \*.pyc |xargs rm
+
+check:
+	pylint fudge

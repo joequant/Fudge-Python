@@ -18,30 +18,30 @@
 #
 
 def decode_prefix(byte):
-   fixedwidth = (byte & 0x80) != 0
-   has_name = (byte & 0x08) != 0
-   has_ordinal = (byte & 0x10) != 0
-   variablewidth = (byte & 0x60) >>5
-   if variablewidth == 3:
-       variablewidth = 4
-   return fixedwidth, variablewidth, has_ordinal, has_name 
- 
-   
+    fixedwidth = (byte & 0x80) != 0
+    has_name = (byte & 0x08) != 0
+    has_ordinal = (byte & 0x10) != 0
+    variablewidth = (byte & 0x60) >>5
+    if variablewidth == 3:
+        variablewidth = 4
+    return fixedwidth, variablewidth, has_ordinal, has_name 
+
+
 def encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name):
-   byte = 0x00
-   if fixedwidth:
-       byte = byte | 0x80
-   if has_name:
-       byte = byte | 0x08
-   if has_ordinal:
-       byte = byte | 0x10
-   if variablewidth > 0:
-       if variablewidth == 4:
-           varwidth = 3
-       else:
-           varwidth = variablewidth
-       byte = byte | varwidth << 5
-   return byte
+    byte = 0x00
+    if fixedwidth:
+        byte = byte | 0x80
+    if has_name:
+        byte = byte | 0x08
+    if has_ordinal:
+        byte = byte | 0x10
+    if variablewidth > 0:
+        if variablewidth == 4:
+            varwidth = 3
+        else:
+            varwidth = variablewidth
+        byte = byte | varwidth << 5
+    return byte
 
 def calculate_variable_width(length):
     if length <= 255:

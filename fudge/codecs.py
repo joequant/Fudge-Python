@@ -18,130 +18,132 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+
+"""A bunch of encode/decode routines for types."""
              
 import struct
 
-from fudge import *
+from fudge import INDICATOR
             
-"""A bunch of encode/decode routines for types."""
 
-def enc_indicator(i):
+def enc_indicator(val):
     return ''
     
-def enc_bool(b):
+def enc_bool(val):
     """Encode a boolean as either a \0x00 or \0x01"""
-    return struct.pack('!?', b)
+    return struct.pack('!?', val)
     #if b:
     #    return '\x01'
     #return '\x00'
                 
-def enc_byte(b):                                  
+def enc_byte(val):                                  
     """encode a single unsignd byte"""
-    return struct.pack('!B', b)
+    return struct.pack('!B', val)
     
-def enc_short(s):                  
+def enc_short(val):                  
     """Encode a single signed int16"""
-    return struct.pack("!h", s)
+    return struct.pack("!h", val)
     
-def enc_int(i):                    
+def enc_int(val):                    
     """Encode a single signed int32"""
-    return struct.pack("!l", i)
+    return struct.pack("!l", val)
     
-def enc_long(l):   
+def enc_long(val):   
     """Encode a single signed int64"""
-    return struct.pack("!q", l)
+    return struct.pack("!q", val)
 
-def enc_float(f):                  
+def enc_float(val):                  
     """Encode a single float"""
-    return struct.pack("!f", f)
+    return struct.pack("!f", val)
 
-def enc_double(d):          
+def enc_double(val):          
     """Encode a single double"""
-    return struct.pack("!d", d) 
+    return struct.pack("!d", val) 
     
-def enc_unicode(s):
+def enc_unicode(val):
     """encode a single unicode string"""
-    utf8 = s.encode("utf-8")
-    format = "!%ss"%len(utf8)
-    return struct.pack(format, utf8)
+    utf8 = val.encode("utf-8")
+    fmt = "!%ss"%len(utf8)
+    return struct.pack(fmt, utf8)
     
-def enc_str(b):
-    return b
+def enc_str(val):  
+    # TODO(jamesc) - Should this be encoded somehow ?
+    return val
     
-def _unpack(format, bytes):
-    n = struct.calcsize(format)
-    return struct.unpack(format, bytes[:n])[0]
+def _unpack(fmt, arg):
+    length = struct.calcsize(fmt)
+    return struct.unpack(fmt, arg[:length])[0]
  
-def dec_indicator(bytes):
-    assert len(bytes) == 0
+def dec_indicator(arg):
+    assert len(arg) == 0
     return INDICATOR
     
-def dec_bool(bytes):
+def dec_bool(arg):
     """Decode a single boolean"""
-    return _unpack('!?', bytes)
+    return _unpack('!?', arg)
 
-def dec_byte(bytes):
+def dec_byte(arg):
     """Decode a single unsigned byte"""
-    return _unpack('!B', bytes) 
+    return _unpack('!B', arg) 
 
-def dec_short(bytes):
+def dec_short(arg):
     """Decode a single signed short"""
-    return _unpack('!h', bytes) 
+    return _unpack('!h', arg) 
 
-def dec_int(bytes):
+def dec_int(arg):
     """Decode a single signed int"""
-    return _unpack('!l', bytes)  
+    return _unpack('!l', arg)  
     
-def dec_long(bytes):
+def dec_long(arg):
     """Decode a single signed long"""
-    return _unpack('!q', bytes) 
+    return _unpack('!q', arg) 
     
-def dec_float(bytes):
+def dec_float(arg):
     """Decode a single signed float"""
-    return _unpack('!f', bytes) 
+    return _unpack('!f', arg) 
 
-def dec_double(bytes):
+def dec_double(arg):
     """Decode a single signed double"""
-    return _unpack('!d', bytes) 
+    return _unpack('!d', arg) 
     
-def dec_unicode(bytes):
+def dec_unicode(arg):
     """Decode a single unicode string"""
-    format = '!%ss'%len(bytes)
-    s = struct.unpack(format, bytes)[0]
-    return unicode(s, "utf-8") 
+    fmt = '!%ss'%len(arg)
+    utf8 = struct.unpack(fmt, arg)[0]
+    return unicode(utf8, "utf-8") 
 
-def dec_str(bytes):
-    return str(bytes)
+def dec_str(arg):
+    return str(arg)
     
 # Header helpers       
 
-def enc_name(s):
+def enc_name(arg):
     """encode a single name string"""
-    return struct.pack("!B", len(s)) + s
+    return struct.pack("!B", len(arg)) + arg
  
-def dec_name(bytes):
+def dec_name(arg):
     """Decode a name from field prefix string"""
-    length = ord(bytes[0])
-    return unicode(bytes[1:length+1]) 
+    length = ord(arg[0])
+    return unicode(arg[1:length+1]) 
  
 # Arrays
-def enc_array(encode_fn, a):
+def enc_array(encode_fn, arg):
     """Encode an array, usually of numbers.  We use a type \ 
     specific encode function"""  
     
     # TODO(jamesc) - Slow but correct...        
     out = ''
-    for val in a:
+    for val in arg:
         out = out + encode_fn(val)
     return out  
     
-def dec_array(decode_fn, width, bytes):
-    assert len(bytes)%width == 0
+def dec_array(decode_fn, width, arg):
+    assert len(arg)%width == 0
     
     out = []
-    num_elements = len(bytes)/width
+    num_elements = len(arg)/width
     for val in range(0, num_elements):
-        out.append(decode_fn(bytes[val*width:val*width+width]))
+        out.append(decode_fn(arg[val*width:val*width+width]))
     return out
     
     

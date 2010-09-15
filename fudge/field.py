@@ -110,7 +110,7 @@ class Field:
        
     
     @classmethod
-    def decode(cls, bytes):
+    def decode(cls, encoded):
         """Decode a field from a byte array.
         
         Returns:
@@ -124,34 +124,34 @@ class Field:
             
         """
         
-        assert len(bytes) > 2
+        assert len(encoded) > 2
         
         # prefix
-        fixedwidth, variablewidth, has_ordinal, has_name = prefix.decode_prefix(ord(bytes[0]))
-        id = ord(bytes[1])
-        field_type = REGISTRY[id]
+        fixedwidth, variablewidth, has_ordinal, has_name = prefix.decode_prefix(ord(encoded[0]))
+        type_id = ord(encoded[1])
+        field_type = REGISTRY[type_id]
         size = 2
         
         # ordinal
         ordinal = None
         if has_ordinal:
-            ordinal = codecs.dec_short(bytes[size:])
+            ordinal = codecs.dec_short(encoded[size:])
             size = size + 2 
          
         # name   
         name = None
         if has_name:
-            name_len = ord(bytes[size])  
-            name = codecs.dec_unicode(bytes[size+1:size+name_len+1]) 
+            name_len = ord(encoded[size])  
+            name = codecs.dec_unicode(encoded[size+1:size+name_len+1]) 
             size = size + name_len + 1 # length encoded as 1
             
         # value
         if fixedwidth:
-            value = field_type.decoder(bytes[size:])
+            value = field_type.decoder(encoded[size:])
             size = size + field_type.fixed_size
         else:
-            value_length = decode_value_length(bytes[size:], variablewidth) 
-            value = field_type.decoder(bytes[size+1:size+value_length+1])
+            value_length = decode_value_length(encoded[size:], variablewidth) 
+            value = field_type.decoder(encoded[size+1:size+value_length+1])
             size = size + value_length + bytes_for_value_length(value_length)
             
         field = Field(field_type, ordinal, name, value)
@@ -192,12 +192,12 @@ def encode_value_length(value_length, writer):
     else:
         writer.write(codecs.enc_int(value_length))
         
-def decode_value_length(bytes, width):
+def decode_value_length(encoded, width):
     """Decode the length of a value from a 
     var_width length. 
     
     Arguments:
-        bytes: The byte stream to read from
+        encoded: The byte stream to read from
         width:  The number of bytes to read (1, 2, 4)
     
     Return:
@@ -205,8 +205,8 @@ def decode_value_length(bytes, width):
     
     """
     if width == 1:
-        return codecs.dec_byte(bytes[0])
+        return codecs.dec_byte(encoded[0])
     elif width == 2:
-        return codecs.dec_short(bytes[0:1])
+        return codecs.dec_short(encoded[0:1])
     else:
-        return codecs.dec_int(bytes[0:3])
+        return codecs.dec_int(encoded[0:3])

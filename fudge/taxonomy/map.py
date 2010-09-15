@@ -1,5 +1,5 @@
-#                                                                                       or 
-# Copyrigh CERN, 2010.
+#
+# Copyright CERN, 2010.
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements. See the NOTICE file
@@ -39,8 +39,8 @@ class Taxonomy(object):
         if taxonomy_map:
             self._by_ordinal = dict(taxonomy_map) 
             
-            for k,v in self._by_ordinal.iteritems():
-                self._by_name[v] = k
+            for key, value in self._by_ordinal.iteritems():
+                self._by_name[value] = key
         else:
             self._by_ordinal = {} 
      
