@@ -33,8 +33,8 @@
   
 * Secondary types
                                         
-* Pretty printer
-* simple dumper reading messages from disk and printing it 
+* Pretty printer - DONE
+* simple dumper reading messages from disk and printing it - DONE
 
 * float encoding (NaN different in C impl ?)
 * unicode encoding (deal with modifiedUTF-8)  
