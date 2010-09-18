@@ -40,11 +40,11 @@ class Message(object):
     def __str__(self):
         return "Message[fields=%s]"%self.fields
             
-    def size(self):
+    def size(self, taxonomy=None):
         """Compute the size for the fields in the message."""
         size = 0
         for field in self.fields:
-            size = size + field.size()
+            size = size + field.size(taxonomy)
         return size
 
     def add(self, value, name=None, ordinal=None, type_=None, class_=None):
@@ -59,15 +59,15 @@ class Message(object):
     def _add_field(self, field):
         self.fields.append(field) 
         
-    def encode(self, writer):
+    def encode(self, writer, taxonomy=None):
         for field in self.fields:
-            field.encode(writer)
+            field.encode(writer, taxonomy)
              
     @classmethod
     def decode(cls, encoded, taxonomy=None):
         message = Message()
         while encoded:
-            next_field, num_read = Field.decode(encoded) 
+            next_field, num_read = Field.decode(encoded, taxonomy) 
             message._add_field(next_field)
             encoded = encoded[num_read:]
         return message

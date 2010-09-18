@@ -55,8 +55,11 @@ class Taxonomy(object):
              
         Raises:
             KeyError : If the ordinal is not in the taxomomy"""      
-        return self._by_ordinal[ordinal] 
-                                         
+        try:
+            return self._by_ordinal[ordinal] 
+        except KeyError:
+            return None
+            
     def get_ordinal(self, name):
         """Return the ordinal for a given name.
 
@@ -68,8 +71,11 @@ class Taxonomy(object):
 
         Raises:
             KeyError : If the name is not in the taxomomy"""      
-        return self._by_name[name] 
-        
+        try:
+            return self._by_name[name] 
+        except KeyError:
+            return None
+            
     def __len__(self):
         """Return the number of elements in the map.""" 
         return len(self._by_ordinal)

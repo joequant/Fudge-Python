@@ -16,7 +16,9 @@
 # specific language governing permissions and limitations
 # under the License.
 #
- 
+      
+"""A Registry, storing Fudge FieldTypes."""
+
 from fudge import codecs
 from fudge import types
 from fudge import utils
@@ -36,7 +38,7 @@ DOUBLE_TYPE_ID = 11
 FLOATARRAY_TYPE_ID = 12
 DOUBLEARRAY_TYPE_ID = 13
 STRING_TYPE_ID = 14
-
+FUDGEMSG_TYPE_ID = 15
 BYTEARRAY4_TYPE_ID = 17
 BYTEARRAY8_TYPE_ID = 18
 BYTEARRAY16_TYPE_ID = 19
@@ -139,6 +141,9 @@ class Registry(object):
         
         self._add(FieldType(STRING_TYPE_ID, unicode, True, 0, \
                 codecs.enc_unicode, codecs.dec_unicode, types.size_unicode))
+
+        self._add(FieldType(FUDGEMSG_TYPE_ID, None, True, 
+                None, None, calc_size = lambda x : x.size()))
 
         self._add(FieldType(BYTEARRAY4_TYPE_ID, str, False, 4, \
                 codecs.enc_str, codecs.dec_str))

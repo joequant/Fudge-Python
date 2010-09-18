@@ -26,6 +26,7 @@ from fudge import registry
 REGISTRY = registry.DEFAULT_REGISTRY
 
 from fudge.field import *                               
+from fudge.taxonomy.map import Taxonomy
 
 INDICATOR_FIELD = REGISTRY.type_by_id(registry.INDICATOR_TYPE_ID)  
 BYTE_FIELD = REGISTRY.type_by_id(registry.BYTE_TYPE_ID)  
@@ -36,9 +37,9 @@ class testField(unittest.TestCase):
     def setUp(self):
         pass   
        
-    def encodeEquals(self, expected, f):
+    def encodeEquals(self, expected, f, taxonomy=None):
         output = cStringIO.StringIO()
-        f.encode(output)                  
+        f.encode(output, taxonomy)                  
         # Allow us to compare easily using \xDF etc..
         result = output.getvalue().encode('hex')
         self.assertEquals(expected, result)
@@ -95,4 +96,23 @@ class testField(unittest.TestCase):
     def test_indicator(self):
         f = Field(INDICATOR_FIELD, None, None, None)
         self.assertEquals(2, f.size())
-        self.encodeEquals('8000', f)        
+        self.encodeEquals('8000', f)
+        
+    def test_size_with_taxonomy(self):
+        f = Field(BYTE_FIELD, None, u'foo', 0xff)
+        t = Taxonomy({1 : u'foo', 2 : u'bar'})
+        
+        self.assertEquals(7, f.size())
+        self.encodeEquals('880203'+u'foo'.encode('hex')+'ff', f)
+        
+        self.assertEquals(5, f.size(t))
+        self.encodeEquals('90020001ff', f, t) 
+        
+    def test_bad_encoded(self):
+        # incomplete headers
+        self.assertRaises(AssertionError, Field.decode, '')
+        self.assertRaises(AssertionError, Field.decode, '\x88')
+        self.assertRaises(AssertionError, Field.decode, '\x88\x02')
+                                                               
+        # TODO(jamesc) better decode error handling
+        # Field.decode('\x88\x02\x01')
