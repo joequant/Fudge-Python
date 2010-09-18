@@ -83,7 +83,17 @@ class Field:
         else:
             size = size + self.type_.fixed_size
         return size
-
+    
+    def is_type(self, type_id):
+        """Return True if this type has ID equal to type_id.
+        
+        Arguments:
+           type_id : the ID to check against
+           
+        Return:
+           True if type_id is the type_id of this object, otherwise False""" 
+        return self.type_.type_id == type_id
+        
     def __repr__(self):
         if self.name and not self.ordinal:
             return "Field[%s:%s-%s]"%(self.name, self.type_, self.value)
@@ -102,7 +112,7 @@ class Field:
         variable_width = 0
         if self.type_.is_variable_sized:
             fixed_width = False
-            if self.type_ is REGISTRY[registry.FUDGEMSG_TYPE_ID]:
+            if self.type_ is REGISTRY[types.FUDGEMSG_TYPE_ID]:
                 # sub-message, need to be taxonomy aware
                 value_length = self.type_.calc_size(self.value, taxonomy)
             else:
@@ -129,7 +139,7 @@ class Field:
         if not fixed_width:
             encode_value_length(value_length, writer)
 
-        if self.type_ is REGISTRY[registry.FUDGEMSG_TYPE_ID]:
+        if self.type_ is REGISTRY[types.FUDGEMSG_TYPE_ID]:
             writer.write(self.type_.encoder(self.value, taxonomy))
         else:
             writer.write(self.type_.encoder(self.value))
@@ -235,6 +245,6 @@ def decode_value_length(encoded, width):
     if width == 1:
         return codecs.dec_byte(encoded[0])
     elif width == 2:
-        return codecs.dec_short(encoded[0:1])
+        return codecs.dec_short(encoded[0:2])
     else:
-        return codecs.dec_int(encoded[0:3])
+        return codecs.dec_int(encoded[0:4])

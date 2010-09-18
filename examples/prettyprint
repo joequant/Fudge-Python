@@ -1,4 +1,5 @@
-#
+#!/usr/bin/env python
+# 
 # Copyright CERN, 2010.
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -19,27 +20,33 @@
 # under the License.
 #
 
-* Use taxonomy to calculate field size and encode/decode - DONE
+"""A simple pretty printer which loads Fudge messages from file.""" 
 
-* encode/decode of Message objects
-
-* Context object 
-  * Allow for custom registry
-  * Allow for Taxonomy map
-
-* Stream based encode/decode
+import os
+import sys
+import getopt
  
-* Unnkown Field Handling
-  
-* Secondary types
-                                        
-* Pretty printer
-* simple dumper reading messages from disk and printing it 
+from fudge.message import Envelope, Message
+from fudge.utils import PrettyPrinter
 
-* float encoding (NaN different in C impl ?)
-* unicode encoding (deal with modifiedUTF-8)  
+help_message = '''
+The help message goes here.
+'''
 
-* dec_ functions should return bytes read to simplify callers ?
-* Move encode/decode to context from Message/Field as in .Net impl ?
 
-* Date, DateTime fields
+def main(argv=None):
+
+
+    filename = argv[1]
+
+    # Just read all into memory
+    encoded = open(filename, "rb").read()
+
+    envelope = Envelope.decode(encoded)
+
+    pp = PrettyPrinter(sys.stdout)
+    pp.format(envelope.message)
+
+    
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

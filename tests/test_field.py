@@ -28,10 +28,10 @@ REGISTRY = registry.DEFAULT_REGISTRY
 from fudge.field import *                               
 from fudge.taxonomy.map import Taxonomy
 
-INDICATOR_FIELD = REGISTRY.type_by_id(registry.INDICATOR_TYPE_ID)  
-BYTE_FIELD = REGISTRY.type_by_id(registry.BYTE_TYPE_ID)  
-INT_FIELD = REGISTRY.type_by_id(registry.INT_TYPE_ID) 
-STRING_FIELD = REGISTRY.type_by_id(registry.STRING_TYPE_ID)
+INDICATOR_FIELD = REGISTRY.type_by_id(types.INDICATOR_TYPE_ID)  
+BYTE_FIELD = REGISTRY.type_by_id(types.BYTE_TYPE_ID)  
+INT_FIELD = REGISTRY.type_by_id(types.INT_TYPE_ID) 
+STRING_FIELD = REGISTRY.type_by_id(types.STRING_TYPE_ID)
 
 class testField(unittest.TestCase):
     def setUp(self):

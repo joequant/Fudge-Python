@@ -21,7 +21,8 @@
 
 import unittest
 
-from fudge.registry import *
+from fudge.registry import *  
+from fudge import types
 from fudge import utils
 
 import uuid
@@ -30,15 +31,15 @@ class testRegistry(unittest.TestCase):
 
     def setUp(self):
         self.reg = Registry() 
-        self.BYTE_TYPE = self.reg[BYTE_TYPE_ID]
-        self.SHORT_TYPE = self.reg.type_by_id(SHORT_TYPE_ID)
-        self.INT_TYPE = self.reg.type_by_id(INT_TYPE_ID)
-        self.LONG_TYPE = self.reg.type_by_id(LONG_TYPE_ID)
+        self.BYTE_TYPE = self.reg[types.BYTE_TYPE_ID]
+        self.SHORT_TYPE = self.reg.type_by_id(types.SHORT_TYPE_ID)
+        self.INT_TYPE = self.reg.type_by_id(types.INT_TYPE_ID)
+        self.LONG_TYPE = self.reg.type_by_id(types.LONG_TYPE_ID)
 
-        self.STRING_TYPE = self.reg.type_by_id(STRING_TYPE_ID)
+        self.STRING_TYPE = self.reg.type_by_id(types.STRING_TYPE_ID)
  
     def test_type_by_id(self):
-        self.assertEquals(self.BYTE_TYPE, self.reg.type_by_id(BYTE_TYPE_ID))
+        self.assertEquals(self.BYTE_TYPE, self.reg.type_by_id(types.BYTE_TYPE_ID))
         try:
             self.reg.type_by_id(254)                   
         except UnknownType:
@@ -128,11 +129,11 @@ class testRegistry(unittest.TestCase):
 
     def test_narrow_str(self):
         array = 'x'*4 
-        self.assertEquals(self.reg[BYTEARRAY4_TYPE_ID], self.reg.narrow(self.reg[BYTEARRAY_TYPE_ID], array))
+        self.assertEquals(self.reg[types.BYTEARRAY4_TYPE_ID], self.reg.narrow(self.reg[types.BYTEARRAY_TYPE_ID], array))
 
         array = 'x'*20
-        self.assertEquals(self.reg[BYTEARRAY20_TYPE_ID], self.reg.narrow(self.reg[BYTEARRAY_TYPE_ID], array))
+        self.assertEquals(self.reg[types.BYTEARRAY20_TYPE_ID], self.reg.narrow(self.reg[types.BYTEARRAY_TYPE_ID], array))
 
         array = 'x'*27
-        self.assertEquals(self.reg[BYTEARRAY_TYPE_ID], self.reg.narrow(self.reg[BYTEARRAY_TYPE_ID], array))
+        self.assertEquals(self.reg[types.BYTEARRAY_TYPE_ID], self.reg.narrow(self.reg[types.BYTEARRAY_TYPE_ID], array))
         

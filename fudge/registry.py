@@ -23,35 +23,9 @@ from fudge import codecs
 from fudge import types
 from fudge import utils
 
-INDICATOR_TYPE_ID = 0
-BOOLEAN_TYPE_ID = 1
-BYTE_TYPE_ID = 2
-SHORT_TYPE_ID = 3
-INT_TYPE_ID = 4
-LONG_TYPE_ID = 5
-BYTEARRAY_TYPE_ID = 6 
-SHORTARRAY_TYPE_ID = 7
-INTARRAY_TYPE_ID = 8
-LONGARRAY_TYPE_ID = 9
-FLOAT_TYPE_ID = 10
-DOUBLE_TYPE_ID = 11 
-FLOATARRAY_TYPE_ID = 12
-DOUBLEARRAY_TYPE_ID = 13
-STRING_TYPE_ID = 14
-FUDGEMSG_TYPE_ID = 15
-BYTEARRAY4_TYPE_ID = 17
-BYTEARRAY8_TYPE_ID = 18
-BYTEARRAY16_TYPE_ID = 19
-BYTEARRAY20_TYPE_ID = 20
-BYTEARRAY32_TYPE_ID = 21
-BYTEARRAY64_TYPE_ID = 22
-BYTEARRAY128_TYPE_ID = 23
-BYTEARRAY256_TYPE_ID = 24
-BYTEARRAY512_TYPE_ID = 25
-
-
 class UnknownType(Exception): 
     pass
+
     
 class FieldType(object):
     """"""
@@ -97,90 +71,90 @@ class Registry(object):
         self.types_by_id = {} 
         self.types_by_class = {}
 
-        self._add(FieldType(INDICATOR_TYPE_ID, None, False, 0, \
+        self._add(FieldType(types.INDICATOR_TYPE_ID, None, False, 0, \
                 codecs.enc_indicator, codecs.dec_indicator, lambda x : 0))
 
-        self._add(FieldType(BOOLEAN_TYPE_ID, bool, False, 1, \
+        self._add(FieldType(types.BOOLEAN_TYPE_ID, bool, False, 1, \
                 codecs.enc_bool, codecs.dec_bool))
-        self._add(FieldType(BYTE_TYPE_ID, int, False, 1, \
+        self._add(FieldType(types.BYTE_TYPE_ID, int, False, 1, \
                 codecs.enc_byte, codecs.dec_byte))
-        self._add(FieldType(SHORT_TYPE_ID, int, False, 2, \
+        self._add(FieldType(types.SHORT_TYPE_ID, int, False, 2, \
                 codecs.enc_short, codecs.dec_short))
-        self._add(FieldType(INT_TYPE_ID, int, False, 4, \
+        self._add(FieldType(types.INT_TYPE_ID, int, False, 4, \
                 codecs.enc_int, codecs.dec_int))
-        self._add(FieldType(LONG_TYPE_ID, long, False, 8, \
+        self._add(FieldType(types.LONG_TYPE_ID, long, False, 8, \
                 codecs.enc_long, codecs.dec_long))
 
-        self._add(FieldType(BYTEARRAY_TYPE_ID, str, True, 0, \
+        self._add(FieldType(types.BYTEARRAY_TYPE_ID, str, True, 0, \
                 codecs.enc_str, codecs.dec_str, types.size_str))
-        self._add(FieldType(SHORTARRAY_TYPE_ID, None, True, 0, \
+        self._add(FieldType(types.SHORTARRAY_TYPE_ID, None, True, 0, \
                 lambda x : codecs.enc_array(codecs.enc_short, x), \
                 lambda x : codecs.dec_array(codecs.dec_short, 2, x), \
                 lambda x : 2 * len(x)))
-        self._add(FieldType(INTARRAY_TYPE_ID, None, True, 0, \
+        self._add(FieldType(types.INTARRAY_TYPE_ID, None, True, 0, \
                 lambda x : codecs.enc_array(codecs.enc_int, x), \
                 lambda x : codecs.dec_array(codecs.dec_int, 4, x), \
                 lambda x : 4 * len(x)))
-        self._add(FieldType(LONGARRAY_TYPE_ID, None, True, 0, \
+        self._add(FieldType(types.LONGARRAY_TYPE_ID, None, True, 0, \
                 lambda x : codecs.enc_array(codecs.enc_long, x), \
                 lambda x : codecs.dec_array(codecs.dec_long, 8, x), \
                 lambda x : 8 * len(x)))
                         
-        self._add(FieldType(FLOAT_TYPE_ID, float, False, 4, \
+        self._add(FieldType(types.FLOAT_TYPE_ID, float, False, 4, \
                 codecs.enc_float, codecs.dec_float))
-        self._add(FieldType(DOUBLE_TYPE_ID, float, False, 8, \
+        self._add(FieldType(types.DOUBLE_TYPE_ID, float, False, 8, \
                 codecs.enc_double, codecs.dec_double))
-        self._add(FieldType(FLOATARRAY_TYPE_ID, None, True, 0, \
+        self._add(FieldType(types.FLOATARRAY_TYPE_ID, None, True, 0, \
                 lambda x : codecs.enc_array(codecs.enc_float, x), \
                 lambda x : codecs.dec_array(codecs.dec_float, 4, x), \
                 lambda x : 4 * len(x)))
-        self._add(FieldType(INTARRAY_TYPE_ID, None, True, 0, \
+        self._add(FieldType(types.DOUBLEARRAY_TYPE_ID, None, True, 0, \
                 lambda x : codecs.enc_array(codecs.enc_double, x), \
                 lambda x : codecs.dec_array(codecs.dec_double, 8, x), \
                 lambda x : 8 * len(x)))
         
-        self._add(FieldType(STRING_TYPE_ID, unicode, True, 0, \
+        self._add(FieldType(types.STRING_TYPE_ID, unicode, True, 0, \
                 codecs.enc_unicode, codecs.dec_unicode, types.size_unicode))
 
-        self._add(FieldType(FUDGEMSG_TYPE_ID, None, True, 
+        self._add(FieldType(types.FUDGEMSG_TYPE_ID, None, True, 
                 None, None, calc_size = lambda x : x.size()))
 
-        self._add(FieldType(BYTEARRAY4_TYPE_ID, str, False, 4, \
+        self._add(FieldType(types.BYTEARRAY4_TYPE_ID, str, False, 4, \
                 codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY8_TYPE_ID, str, False, 8, \
+        self._add(FieldType(types.BYTEARRAY8_TYPE_ID, str, False, 8, \
                 codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY16_TYPE_ID, str, False, 16, \
+        self._add(FieldType(types.BYTEARRAY16_TYPE_ID, str, False, 16, \
                 codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY20_TYPE_ID, str, False, 20, \
+        self._add(FieldType(types.BYTEARRAY20_TYPE_ID, str, False, 20, \
                 codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY32_TYPE_ID, str, False, 32, \
+        self._add(FieldType(types.BYTEARRAY32_TYPE_ID, str, False, 32, \
                 codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY64_TYPE_ID, str, False, 64, \
+        self._add(FieldType(types.BYTEARRAY64_TYPE_ID, str, False, 64, \
                 codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY128_TYPE_ID, str, False, 128, \
+        self._add(FieldType(types.BYTEARRAY128_TYPE_ID, str, False, 128, \
                 codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY256_TYPE_ID, str, False, 256, \
+        self._add(FieldType(types.BYTEARRAY256_TYPE_ID, str, False, 256, \
                 codecs.enc_str, codecs.dec_str))
-        self._add(FieldType(BYTEARRAY512_TYPE_ID, str, False, 512, \
+        self._add(FieldType(types.BYTEARRAY512_TYPE_ID, str, False, 512, \
                 codecs.enc_str, codecs.dec_str))
 
         
         self._narrower_fns = {
-            BYTE_TYPE_ID: self._narrow_int,
-            SHORT_TYPE_ID: self._narrow_int,
-            INT_TYPE_ID: self._narrow_int, 
-            LONG_TYPE_ID: self._narrow_int,
+            types.BYTE_TYPE_ID: self._narrow_int,
+            types.SHORT_TYPE_ID: self._narrow_int,
+            types.INT_TYPE_ID: self._narrow_int, 
+            types.LONG_TYPE_ID: self._narrow_int,
             
-            BYTEARRAY_TYPE_ID: self._narrow_str,
-            BYTEARRAY4_TYPE_ID: self._narrow_str,
-            BYTEARRAY8_TYPE_ID: self._narrow_str,
-            BYTEARRAY16_TYPE_ID: self._narrow_str,
-            BYTEARRAY20_TYPE_ID: self._narrow_str,
-            BYTEARRAY32_TYPE_ID: self._narrow_str,
-            BYTEARRAY64_TYPE_ID: self._narrow_str,
-            BYTEARRAY128_TYPE_ID: self._narrow_str,
-            BYTEARRAY256_TYPE_ID: self._narrow_str,
-            BYTEARRAY512_TYPE_ID: self._narrow_str,
+            types.BYTEARRAY_TYPE_ID: self._narrow_str,
+            types.BYTEARRAY4_TYPE_ID: self._narrow_str,
+            types.BYTEARRAY8_TYPE_ID: self._narrow_str,
+            types.BYTEARRAY16_TYPE_ID: self._narrow_str,
+            types.BYTEARRAY20_TYPE_ID: self._narrow_str,
+            types.BYTEARRAY32_TYPE_ID: self._narrow_str,
+            types.BYTEARRAY64_TYPE_ID: self._narrow_str,
+            types.BYTEARRAY128_TYPE_ID: self._narrow_str,
+            types.BYTEARRAY256_TYPE_ID: self._narrow_str,
+            types.BYTEARRAY512_TYPE_ID: self._narrow_str,
             
         }
      
@@ -238,30 +212,30 @@ class Registry(object):
      
     def _narrow_int(self, value):
         if value >= utils.MIN_BYTE and value <= utils.MAX_BYTE:
-            return self[BYTE_TYPE_ID]
+            return self[types.BYTE_TYPE_ID]
         elif value >= utils.MIN_SHORT and value <= utils.MAX_SHORT:
-            return self[SHORT_TYPE_ID]
+            return self[types.SHORT_TYPE_ID]
         elif value >= utils.MIN_INT and value <= utils.MAX_INT:
-            return self[INT_TYPE_ID]
+            return self[types.INT_TYPE_ID]
         else: 
-            return  self[LONG_TYPE_ID]
+            return  self[types.LONG_TYPE_ID]
  
     def _narrow_str(self, value): 
         
-        fixed_bytelen = { 4: self[BYTEARRAY4_TYPE_ID],
-                8: self[BYTEARRAY8_TYPE_ID],
-                16: self[BYTEARRAY16_TYPE_ID],
-                20: self[BYTEARRAY20_TYPE_ID],
-                32: self[BYTEARRAY32_TYPE_ID],
-                64:  self[BYTEARRAY64_TYPE_ID],
-                128:  self[BYTEARRAY128_TYPE_ID],
-                256: self[BYTEARRAY256_TYPE_ID],
-                512: self[BYTEARRAY512_TYPE_ID],
+        fixed_bytelen = { 4: self[types.BYTEARRAY4_TYPE_ID],
+                8: self[types.BYTEARRAY8_TYPE_ID],
+                16: self[types.BYTEARRAY16_TYPE_ID],
+                20: self[types.BYTEARRAY20_TYPE_ID],
+                32: self[types.BYTEARRAY32_TYPE_ID],
+                64: self[types.BYTEARRAY64_TYPE_ID],
+                128: self[types.BYTEARRAY128_TYPE_ID],
+                256: self[types.BYTEARRAY256_TYPE_ID],
+                512: self[types.BYTEARRAY512_TYPE_ID],
             } 
         array_len = len(value)
         if array_len in fixed_bytelen:
             return fixed_bytelen[array_len]
-        return self[BYTEARRAY_TYPE_ID]
+        return self[types.BYTEARRAY_TYPE_ID]
         
             
             
