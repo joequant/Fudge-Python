@@ -76,11 +76,19 @@ FUDGE_TYPE_NAMES =  {
     BYTEARRAY512_TYPE_ID : "byte[512]",
 }   
 
-def name_for_type(type_):
+def name_for_type(type_id):
+    """Return the human friendly name of a Fudge Type.
+    
+    Arguments:
+        type_id:  the ID of the Type
+        
+    Return:
+        The name of the type, if known, otherwise 'unknown(type_id)'
+    """
     try:
-        return FUDGE_TYPE_NAMES[type_.type_id]
-    except:
-        return 'Unknown(%s)'%type_.type_id
+        return FUDGE_TYPE_NAMES[type_id]
+    except KeyError:
+        return 'unknown(%s)'%type_id
 
 
 def size_unicode(arg):
@@ -91,3 +99,11 @@ def size_str(arg):
     """Return the size of a bytestring"""  
     return len(arg)
 
+class Indicator(object): 
+    """A instance of a Fudge Indicator object.
+    
+    This is a zero-length type, and we nornally just return
+    this singleton instance."""
+    pass
+
+INDICATOR = Indicator()            

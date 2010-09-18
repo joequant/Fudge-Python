@@ -20,7 +20,7 @@
 import unittest
 import cStringIO
  
-from fudge import INDICATOR
+from fudge.types import INDICATOR
 from fudge.codecs import * 
 
 from fudge import utils

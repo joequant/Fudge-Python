@@ -19,8 +19,9 @@
 # under the License.
 #   
 
+"""A native python implementation of the Fudge Messaging Protocol.
 
-class Indicator(object):
-    pass
-    
-INDICATOR = Indicator()
+See http://www.fudgemsg.org/display/FDG/Fudge+Messaging+Home for
+more details.
+
+"""

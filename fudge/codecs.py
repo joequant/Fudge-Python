@@ -23,7 +23,7 @@
 
 import struct
 
-from fudge import INDICATOR
+from fudge.types import INDICATOR
 
 
 def enc_indicator(val=None):

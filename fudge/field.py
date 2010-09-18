@@ -98,7 +98,8 @@ class Field:
         if self.name and not self.ordinal:
             return "Field[%s:%s-%s]"%(self.name, self.type_, self.value)
         elif self.name and self.ordinal:
-            return "Field[%s,%d:%s-%s]"%(self.name, self.ordinal, self.type_, self.value)
+            return "Field[%s,%d:%s-%s]"%(self.name, self.ordinal, \
+                    self.type_, self.value)
         else:
             return "Field[%s-%s]"%(self.type_, self.value)
 
@@ -163,7 +164,8 @@ class Field:
 
         # prefix
         pos = 0
-        fixedwidth, variablewidth, has_ordinal, has_name = prefix.decode_prefix(ord(encoded[pos]))
+        fixedwidth, variablewidth, has_ordinal, has_name = \
+                prefix.decode_prefix(ord(encoded[pos]))
         type_id = ord(encoded[pos + 1])
         field_type = REGISTRY[type_id]
         pos = pos + 2

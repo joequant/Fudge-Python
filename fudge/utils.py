@@ -45,10 +45,7 @@ class PrettyPrinter(object):
     
     """
     
-    """The default indentation amount for a Pretty Printer : 2 """
     DEFAULT_INDENT = 2    
- 
-    
 
     def __init__(self, writer, indent = DEFAULT_INDENT):
         """Create a new PrettyPrinter
@@ -59,7 +56,6 @@ class PrettyPrinter(object):
         """
         self._writer = writer
         self._indent = indent
-        self._indentText = u' '*self._indent 
         
     def format(self, message, depth=0): 
         """Output a formatted message to the underlying writer
@@ -77,7 +73,7 @@ class PrettyPrinter(object):
             fieldspecs.append(fieldspec) 
        
         max_fieldspec_width = len(max(fieldspecs, key=str.__len__))
-        max_typename_width = len(max(map(lambda x : types.name_for_type(x.type_), fields), key=str.__len__))
+        max_typename_width = len(max(map(lambda x : types.name_for_type(x.type_.type_id), fields), key=str.__len__))
 
         for field, fieldspec, index in  zip(fields, fieldspecs, range(0, len(fields))) :
             self._format_field(field, fieldspec, index, depth, \
@@ -85,7 +81,7 @@ class PrettyPrinter(object):
 
     def _format_field(self, field, fieldspec, index, depth, max_fs, max_tn):
         """Format a single field on a line"""
-        typename = types.name_for_type(field.type_)
+        typename = types.name_for_type(field.type_.type_id)
         self._writer.write("{0:<{width}} {1:<{tn_width}} ".format(fieldspec, typename, width=max_fs, tn_width=max_tn) )
         if field.is_type(types.FUDGEMSG_TYPE_ID):
             format(field.value, depth + 1)
@@ -106,45 +102,45 @@ class PrettyPrinter(object):
             
         """
         buf = StringIO() 
-        for i in range(0, depth):
-            buf.write(self._indentText)
-        buf.write("%d"%index) 
+       
+        buf.write(' ' * self._indent * depth)
+        buf.write(str(index)) 
         buf.write('-')
         if field.ordinal:
             buf.write('(%s)'%field.ordinal)
             if field.name:
-                buf.write(' ') 
+                buf.write(' ')
         if field.name:
             buf.write(field.name)
         return buf.getvalue()
     
-    def _outputArray(self, value, truncate=8):
+    def _output_array(self, value, truncate=8):
         num_elements = len(value)
         if truncate > num_elements:
             truncate = num_elements 
         self._writer.write('[')
-        self._writer.write(', '.join(map(lambda x: str(x),value[:truncate]))) 
+        self._writer.write(', '.join(map(lambda x : str(x), value[:truncate]))) 
         if truncate < num_elements:
             self._writer.write(" ... %s more"%(num_elements - truncate))
         self._writer.write(']')
          
     def _write_typed_value(self, type_, value):
         renderers = {
-            types.SHORTARRAY_TYPE_ID : self._outputArray,
-            types.FLOATARRAY_TYPE_ID : self._outputArray,
-            types.DOUBLEARRAY_TYPE_ID : self._outputArray,
-            types.INTARRAY_TYPE_ID : self._outputArray,
-            types.LONGARRAY_TYPE_ID : self._outputArray,
-            types.BYTEARRAY_TYPE_ID : self._outputArray,
-            types.BYTEARRAY4_TYPE_ID : self._outputArray,
-            types.BYTEARRAY8_TYPE_ID : self._outputArray,
-            types.BYTEARRAY16_TYPE_ID : self._outputArray,
-            types.BYTEARRAY20_TYPE_ID : self._outputArray,
-            types.BYTEARRAY32_TYPE_ID : self._outputArray,
-            types.BYTEARRAY64_TYPE_ID : self._outputArray,
-            types.BYTEARRAY128_TYPE_ID : self._outputArray,
-            types.BYTEARRAY256_TYPE_ID : self._outputArray,
-            types.BYTEARRAY512_TYPE_ID : self._outputArray,
+            types.SHORTARRAY_TYPE_ID : self._output_array,
+            types.FLOATARRAY_TYPE_ID : self._output_array,
+            types.DOUBLEARRAY_TYPE_ID : self._output_array,
+            types.INTARRAY_TYPE_ID : self._output_array,
+            types.LONGARRAY_TYPE_ID : self._output_array,
+            types.BYTEARRAY_TYPE_ID : self._output_array,
+            types.BYTEARRAY4_TYPE_ID : self._output_array,
+            types.BYTEARRAY8_TYPE_ID : self._output_array,
+            types.BYTEARRAY16_TYPE_ID : self._output_array,
+            types.BYTEARRAY20_TYPE_ID : self._output_array,
+            types.BYTEARRAY32_TYPE_ID : self._output_array,
+            types.BYTEARRAY64_TYPE_ID : self._output_array,
+            types.BYTEARRAY128_TYPE_ID : self._output_array,
+            types.BYTEARRAY256_TYPE_ID : self._output_array,
+            types.BYTEARRAY512_TYPE_ID : self._output_array,
         
         }   
         

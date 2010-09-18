@@ -218,11 +218,12 @@ class Registry(object):
         elif value >= utils.MIN_INT and value <= utils.MAX_INT:
             return self[types.INT_TYPE_ID]
         else: 
-            return  self[types.LONG_TYPE_ID]
+            return self[types.LONG_TYPE_ID]
  
-    def _narrow_str(self, value): 
+    def _narrow_str(self, value):
         
-        fixed_bytelen = { 4: self[types.BYTEARRAY4_TYPE_ID],
+        fixed_bytelen = { 
+                4: self[types.BYTEARRAY4_TYPE_ID],
                 8: self[types.BYTEARRAY8_TYPE_ID],
                 16: self[types.BYTEARRAY16_TYPE_ID],
                 20: self[types.BYTEARRAY20_TYPE_ID],
