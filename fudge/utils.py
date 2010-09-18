@@ -123,10 +123,7 @@ class PrettyPrinter(object):
         if truncate > num_elements:
             truncate = num_elements 
         self._writer.write('[')
-        for i in range(0, truncate):
-            self._writer.write(str(value[i]))
-            if i + 1 < truncate:
-                self._writer.write(', ')
+        self._writer.write(', '.join(map(lambda x: str(x),value[:truncate]))) 
         if truncate < num_elements:
             self._writer.write(" ... %s more"%(num_elements - truncate))
         self._writer.write(']')
