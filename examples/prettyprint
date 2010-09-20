@@ -43,9 +43,9 @@ def main(argv=None):
     encoded = open(filename, "rb").read()
 
     envelope = Envelope.decode(encoded)
-
+    print envelope
     pp = PrettyPrinter(sys.stdout)
-    pp.format(envelope.message)
+    pp.format(envelope.message,depth=1)
 
     
 if __name__ == "__main__":
