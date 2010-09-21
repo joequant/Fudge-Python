@@ -1,4 +1,4 @@
-# 
+#
 # Copyright CERN, 2010.
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -27,16 +27,16 @@ BYTE_TYPE_ID = 2
 SHORT_TYPE_ID = 3
 INT_TYPE_ID = 4
 LONG_TYPE_ID = 5
-BYTEARRAY_TYPE_ID = 6 
+BYTEARRAY_TYPE_ID = 6
 SHORTARRAY_TYPE_ID = 7
 INTARRAY_TYPE_ID = 8
 LONGARRAY_TYPE_ID = 9
 FLOAT_TYPE_ID = 10
-DOUBLE_TYPE_ID = 11 
+DOUBLE_TYPE_ID = 11
 FLOATARRAY_TYPE_ID = 12
 DOUBLEARRAY_TYPE_ID = 13
 STRING_TYPE_ID = 14
-FUDGEMSG_TYPE_ID = 15 
+FUDGEMSG_TYPE_ID = 15
 # No 16
 BYTEARRAY4_TYPE_ID = 17
 BYTEARRAY8_TYPE_ID = 18
@@ -63,7 +63,7 @@ FUDGE_TYPE_NAMES =  {
     DOUBLE_TYPE_ID : "double",
     FLOATARRAY_TYPE_ID : "float[]",
     DOUBLEARRAY_TYPE_ID :"double[]",
-    STRING_TYPE_ID : "string",           
+    STRING_TYPE_ID : "string",
     FUDGEMSG_TYPE_ID : "message",
     BYTEARRAY4_TYPE_ID : "byte[4]",
     BYTEARRAY8_TYPE_ID : "byte[8]",
@@ -74,14 +74,14 @@ FUDGE_TYPE_NAMES =  {
     BYTEARRAY128_TYPE_ID : "byte[128]",
     BYTEARRAY256_TYPE_ID : "byte[256]",
     BYTEARRAY512_TYPE_ID : "byte[512]",
-}   
+}
 
 def name_for_type(type_id):
     """Return the human friendly name of a Fudge Type.
-    
+
     Arguments:
         type_id:  the ID of the Type
-        
+
     Return:
         The name of the type, if known, otherwise 'unknown(type_id)'
     """
@@ -94,18 +94,19 @@ def name_for_type(type_id):
 def size_unicode(arg):
     """Calculate the size of a unicode string"""
     return len(arg.encode('utf-8'))
-    
+
 def size_str(arg):
-    """Return the size of a bytestring"""  
+    """Return the size of a bytestring"""
     return len(arg)
 
-class Indicator(object): 
+class Indicator(object):
     """A instance of a Fudge Indicator object.
-    
-    This is a zero-length type, and we nornally just return
+
+    This is a zero-length type, and we normally just return
     this singleton instance."""
     pass
-    
-    def __repr(self):
+
+    def __repr__(self):
         return "Indicator()"
-INDICATOR = Indicator()            
+
+INDICATOR = Indicator()

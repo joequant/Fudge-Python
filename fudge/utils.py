@@ -1,4 +1,4 @@
-# 
+#
 # Copyright CERN, 2010.
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -20,6 +20,7 @@
 #
 
 """Some utility functions, constants and classes"""
+import sys
 
 from  cStringIO import StringIO
 
@@ -32,46 +33,46 @@ MIN_SHORT = -32768
 MAX_SHORT = 32767
 
 MIN_INT = -2147483648
-MAX_INT = 2147483647 
+MAX_INT = 2147483647
 
 MIN_LONG = long(-2**63)
 MAX_LONG = long(2**63-1)
-      
+
 
 class PrettyPrinter(object):
     """A PrettyPrinter for Fudge messages.
-     
-    Based on the Java FudgeMsgFormatter.
-    
-    """
-    
-    DEFAULT_INDENT = 2    
 
-    def __init__(self, writer, indent = DEFAULT_INDENT):
+    Based on the Java FudgeMsgFormatter.
+
+    """
+
+    DEFAULT_INDENT = 2
+
+    def __init__(self, writer = sys.stdout, indent = DEFAULT_INDENT):
         """Create a new PrettyPrinter
-        
+
         Arguments:
             writer:  the writer stream to output to
             indent:  how much to indent a sub-message (Default:2)
         """
         self._writer = writer
         self._indent = indent
-        
-    def format(self, message, depth=0): 
+
+    def format(self, message, depth=0):
         """Output a formatted message to the underlying writer
-        
+
         Arguments:
             message:  the message to write
             depth:  The depth of this message/sub-message (Default:0)
-            
+
         """
         fields = message.fields
-        max_typename_width = -1  
+        max_typename_width = -1
         fieldspecs = []
         for field, index in zip(fields, range(0, len(fields))):
             fieldspec = self._get_fieldspec(field, index, depth)
-            fieldspecs.append(fieldspec) 
-       
+            fieldspecs.append(fieldspec)
+
         max_fieldspec_width = len(max(fieldspecs, key=str.__len__))
         max_typename_width = len(max(map(lambda x : types.name_for_type(x.type_.type_id), fields), key=str.__len__))
 
@@ -84,6 +85,7 @@ class PrettyPrinter(object):
         typename = types.name_for_type(field.type_.type_id)
         self._writer.write("{0:<{width}} {1:<{tn_width}} ".format(fieldspec, typename, width=max_fs, tn_width=max_tn) )
         if field.is_type(types.FUDGEMSG_TYPE_ID):
+            self._writer.write('\n')
             self.format(field.value, depth + 1)
         else:
             self._write_typed_value(field.type_, field.value)
@@ -92,38 +94,39 @@ class PrettyPrinter(object):
 
     def _get_fieldspec(self, field, index, depth):
         """Create a string representation of a Field specification header.
-        
+
         Arguments:
             field : The field
             index : Index within the current message of this field
-            depth : Depth of current message 
+            depth : Depth of current message
         Return:
             Formatted string representation of the Field header
-            
+
+
         """
-        buf = StringIO() 
-       
+        buf = StringIO()
+
         buf.write(' ' * self._indent * depth)
-        buf.write(str(index)) 
+        buf.write(str(index))
         buf.write('-')
-        if field.ordinal:
+        if field.ordinal is not None:
             buf.write('(%s)'%field.ordinal)
             if field.name:
                 buf.write(' ')
         if field.name:
             buf.write(field.name)
         return buf.getvalue()
-    
+
     def _output_array(self, value, truncate=8):
         num_elements = len(value)
         if truncate > num_elements:
-            truncate = num_elements 
+            truncate = num_elements
         self._writer.write('[')
-        self._writer.write(', '.join(map(lambda x : str(x), value[:truncate]))) 
+        self._writer.write(', '.join(map(lambda x : str(x), value[:truncate])))
         if truncate < num_elements:
             self._writer.write(" ... %s more"%(num_elements - truncate))
         self._writer.write(']')
-         
+
     def _write_typed_value(self, type_, value):
         renderers = {
             types.SHORTARRAY_TYPE_ID : self._output_array,
@@ -141,11 +144,10 @@ class PrettyPrinter(object):
             types.BYTEARRAY128_TYPE_ID : self._output_array,
             types.BYTEARRAY256_TYPE_ID : self._output_array,
             types.BYTEARRAY512_TYPE_ID : self._output_array,
-        
-        }   
-        
-        try : 
+
+        }
+
+        try :
             renderers[type_.type_id](value)
         except KeyError:
             self._writer.write(str(value))
-           

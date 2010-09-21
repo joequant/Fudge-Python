@@ -64,7 +64,7 @@ class Field:
         """
         has_ordinal = self.ordinal is not None
         has_name = self.name is not None
-        
+
         size = 2 # prefix
         if self.name and taxonomy:
             if taxonomy.get_ordinal(self.name):
@@ -75,7 +75,7 @@ class Field:
         if has_name:
             # one for size prefix
             size = size + 1 + types.size_unicode(self.name)
-            
+
         if self.type_.is_variable_sized:
             # We store a variable sized length and then the value itself
             if self.is_type(types.FUDGEMSG_TYPE_ID):
@@ -87,17 +87,17 @@ class Field:
         else:
             size = size + self.type_.fixed_size
         return size
-    
+
     def is_type(self, type_id):
         """Return True if this type has ID equal to type_id.
-        
+
         Arguments:
            type_id : the ID to check against
-           
+
         Return:
-           True if type_id is the type_id of this object, otherwise False""" 
+           True if type_id is the type_id of this object, otherwise False"""
         return self.type_.type_id == type_id
-        
+
     def __repr__(self):
         if self.name and not self.ordinal:
             return "Field[%s:%s-%s]"%(self.name, self.type_, self.value)
@@ -131,7 +131,7 @@ class Field:
             if tax_ord:
                 ordinal = tax_ord
                 name = None
-            
+
         writer.write(chr(prefix.encode_prefix(fixed_width, variable_width, \
                 ordinal is not None, name is not None)))
         writer.write(codecs.enc_byte(self.type_.type_id))
@@ -188,8 +188,8 @@ class Field:
             name = codecs.dec_unicode(encoded[pos+1:pos+name_len+1])
             pos = pos + name_len + 1 # length encoded as 1 byte
         elif has_ordinal and taxonomy:
-            name = taxonomy.get_name(ordinal) 
-        
+            name = taxonomy.get_name(ordinal)
+
         # value
         if fixedwidth:
             value = field_type.decoder(encoded[pos:])
@@ -258,4 +258,3 @@ def decode_value_length(encoded, width):
         return codecs.dec_short(encoded[0:2])
     else:
         return codecs.dec_int(encoded[0:4])
-            
