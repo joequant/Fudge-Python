@@ -20,52 +20,54 @@
 
 import unittest
 
-from fudge.prefix import FieldPrefix  
+from fudge.prefix import *
 
 class FieldPrefixTests(unittest.TestCase):
     def setUp(self):
         pass
-     
+
     def testCreate(self):
-        p = FieldPrefix(0x98)  # fixed, ordinal, name
-        self.assertTrue(p.fixedwidth)
-        self.assertTrue(p.has_ordinal)
-        self.assertTrue(p.has_name)
-        self.assertEquals(0, p.variablewidth) 
-        
-        byte = p.encode()                                   
+        fixedwidth, variablewidth, has_ordinal, has_name = \
+                decode_prefix(0x98)  # fixed, ordinal, name
+        self.assertTrue(fixedwidth)
+        self.assertTrue(has_ordinal)
+        self.assertTrue(has_name)
+        self.assertEquals(0, variablewidth)
+
+        byte = encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name)
         self.assertEquals(0x98, byte)
-     
-    def testVariableWidth(self): 
+
+    def testVariableWidth(self):
         """There are 4 varwidth options"""
         ZERO = 0x00 # 0000 0000
         ONE = 0x20  # 0010 0000
         TWO = 0x40  # 0100 0000
-        FOUR = 0x60 # 0110 0000      
-        
-        p = FieldPrefix(ZERO)
-        self.assertFalse(p.fixedwidth) 
-        self.assertEquals(0, p.variablewidth) 
-        byte = p.encode()                                   
+        FOUR = 0x60 # 0110 0000
+
+        fixedwidth, variablewidth, has_ordinal, has_name = \
+                decode_prefix(ZERO)
+        self.assertFalse(fixedwidth)
+        self.assertEquals(0, variablewidth)
+        byte = encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name)
         self.assertEquals(ZERO, byte)
-                           
-        p = FieldPrefix(ONE)
-        self.assertFalse(p.fixedwidth) 
-        self.assertEquals(1, p.variablewidth)
-        byte = p.encode()                                   
+
+        fixedwidth, variablewidth, has_ordinal, has_name = \
+                decode_prefix(ONE)
+        self.assertFalse(fixedwidth)
+        self.assertEquals(1, variablewidth)
+        byte = encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name)
         self.assertEquals(ONE, byte)
 
-        p = FieldPrefix(TWO)
-        self.assertFalse(p.fixedwidth) 
-        self.assertEquals(2, p.variablewidth)
-        byte = p.encode()                                   
+        fixedwidth, variablewidth, has_ordinal, has_name = \
+                decode_prefix(TWO)
+        self.assertFalse(fixedwidth)
+        self.assertEquals(2, variablewidth)
+        byte = encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name)
         self.assertEquals(TWO, byte)
 
-        p = FieldPrefix(FOUR)
-        self.assertFalse(p.fixedwidth) 
-        self.assertEquals(4, p.variablewidth) 
-        byte = p.encode()                                   
-        self.assertEquals(FOUR, byte) 
-         
-if __name__ == '__main__':
-    unittest.main()
+        fixedwidth, variablewidth, has_ordinal, has_name = \
+                decode_prefix(FOUR)
+        self.assertFalse(fixedwidth)
+        self.assertEquals(4, variablewidth)
+        byte = encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name)
+        self.assertEquals(FOUR, byte)
