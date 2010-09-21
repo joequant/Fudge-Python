@@ -49,12 +49,12 @@ class TaxonomyResolver:
             taxonomy_id : the id of the Taxonomy we look for
             
         Returns:
-            A `Taxonomy` if one exists for that id
-            
-        Raises:
-            KeyError : If there is no taxonomy for a given ID
+            A `Taxonomy` if one exists for that id, else None
         """
-        return self._taxonomy_dict[taxonomy_id]
-        
+        try:
+            return self._taxonomy_dict[taxonomy_id]
+        except KeyError:
+            return None
+            
     def __len__(self): 
         return len(self._taxonomy_dict)

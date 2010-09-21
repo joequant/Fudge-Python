@@ -29,7 +29,7 @@ class TestMapTaxomomy(unittest.TestCase):
         tr = TaxonomyResolver()
         
         self.assertEquals(0, len(tr)) 
-        self.assertRaises(KeyError, tr.resolve_taxonomy, 0)
+        self.assertEquals(None, tr.resolve_taxonomy(1))
         
     def test_simple_resolver(self):
         t1 = Taxonomy({1: u'foo', 2: u'bar'})
