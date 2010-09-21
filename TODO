@@ -20,6 +20,7 @@
 #
 
 * Use taxonomy to calculate field size and encode/decode - DONE
+ - Still to check that the logic for using taxonomies is ok. 
 
 * encode/decode of Message objects
 
@@ -42,4 +43,11 @@
 * dec_ functions should return bytes read to simplify callers ?
 * Move encode/decode to context from Message/Field as in .Net impl ?
 
-* Date, DateTime fields
+* Date, DateTime fields  
+
+
+Questions:
+
+Taxonomies:
+* What to do if taxonomy in message, but not supplied on decode ? 
+* Is 0 a valid taxonomy ID ?  If there are ordinals and ID==0 then I should assume a taxonomy ?
