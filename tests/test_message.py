@@ -23,13 +23,35 @@ import unittest
 import cStringIO
  
 from fudge.message import Envelope, Message
+from fudge.types import INDICATOR
 
 class messageTests(unittest.TestCase):
     def setUp(self):
-        pass
+        self._output = cStringIO.StringIO()
+    
+    def assertOutput(self, encoded):
+        self.assertEquals(encoded, self._output.getvalue())
 
-    def testEmptyMessage(self):
-         output = cStringIO.StringIO()
+    def test_empty_envelope(self):  
          empty = Envelope(Message())
-         empty.encode(output)
-         self.assertEquals("\x00\x00\x00\x00\x00\x00\x00\x08", output.getvalue())
+         empty.encode(self._output)
+         self.assertOutput('\x00\x00\x00\x00\x00\x00\x00\x08')
+         
+    def test_simple_message(self):
+        """A Very simple message - a single indicator field"""
+        message = Message()
+        message.encode(self._output)
+        self.assertOutput('') 
+        
+        self._output.reset()
+        message.add(INDICATOR) 
+        message.encode(self._output)
+        self.assertOutput('\x80\x00')
+   
+    def test_message_with_multi_fields(self):
+        message = Message()
+        message.add(INDICATOR)
+        message.add(INDICATOR, ordinal=2)
+        message.add(True, classname='bool')
+        message.encode(self._output)
+        self.assertOutput('\x80\x00\x90\x00\x00\x02\x80\x01\x01')

@@ -105,5 +105,7 @@ class Indicator(object):
     This is a zero-length type, and we nornally just return
     this singleton instance."""
     pass
-
+    
+    def __repr(self):
+        return "Indicator()"
 INDICATOR = Indicator()            

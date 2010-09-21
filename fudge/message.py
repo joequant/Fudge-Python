@@ -46,11 +46,11 @@ class Message(object):
             size = size + field.size(taxonomy)
         return size
 
-    def add(self, value, name=None, ordinal=None, type_=None, class_=None):
+    def add(self, value, name=None, ordinal=None, type_=None, classname=None):
         """Add a new value to the message"""
         if not type_:
             # Try and work it out
-            type_ = self.registry.type_by_class(value, class_=class_)
+            type_ = self.registry.type_by_class(value, classname=classname)
 
         type_ = self.registry.narrow(type_, value)
         self._add_field(Field(type_, ordinal, name, value),)
