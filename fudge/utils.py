@@ -84,7 +84,7 @@ class PrettyPrinter(object):
         typename = types.name_for_type(field.type_.type_id)
         self._writer.write("{0:<{width}} {1:<{tn_width}} ".format(fieldspec, typename, width=max_fs, tn_width=max_tn) )
         if field.is_type(types.FUDGEMSG_TYPE_ID):
-            format(field.value, depth + 1)
+            self.format(field.value, depth + 1)
         else:
             self._write_typed_value(field.type_, field.value)
         self._writer.write('\n')
