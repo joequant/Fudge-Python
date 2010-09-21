@@ -17,56 +17,59 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-                
+
 import cStringIO
 
 from fudge.message import Message, Envelope
-from fudge import registry     
+from fudge import registry
 from fudge import types
-          
-MY_NAME = u"Random Person" 
+
+from fudge import utils
+
+MY_NAME = u"Random Person"
 
 ADDRESS = [u"123 Fake Street", u"Some City",
            u"P0S T4L", u"Country"]
-           
-def main(): 
+
+def main():
     """A Simple example of how to use Fudge.
-    
+
     This will help drive the API design."""
-    
-    MSG_TYPE = registry.DEFAULT_REGISTRY[types.FUDGEMSG_TYPE_ID]                                    
-    
+
+    MSG_TYPE = registry.DEFAULT_REGISTRY[types.FUDGEMSG_TYPE_ID]
+
     m = Message()
-     
+
     m.add(MY_NAME, name=u"name")
     m.add(19801231L, ordinal=4, name=u"dob" )
-    
+
     submsg = Message()
     for line, ordinal in zip(ADDRESS, range(len(ADDRESS))):
         submsg.add(line, ordinal=ordinal)
-    m.add(submsg, name=u"address", type_=MSG_TYPE)
-    e = Envelope(m) 
-    
+    m.add(submsg, name=u"address")
+    e = Envelope(m)
+
+    output = utils.PrettyPrinter()
+
     print "Message:"
-    for f in m.fields:
-        print "  %s"% f
-    
+    output.format(m)
+
     writer = cStringIO.StringIO()
     e.encode(writer)
     bytes = writer.getvalue()
-    
+
     print "Encoded:"
     print "  %s"%repr(bytes)
-    
-    f = Envelope.decode(bytes)  
+
+    f = Envelope.decode(bytes)
     print "Decoded:"
     print "  Directives : %d"%f.directives
     print "  Schema Version : %d"%f.schema_version
     print "  Taxonomy : %d"%f.taxonomy
-    print "Message:"  
+    print "Message:"
     for f in m.fields:
         print "  %s"%f
-    
+
 if __name__ == '__main__':
     main()
 
