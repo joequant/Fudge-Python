@@ -22,28 +22,29 @@ import cStringIO
 
 from fudge.message import Message, Envelope
 from fudge import registry     
+from fudge import types
           
-MY_NAME = u"Some Random Person" 
-  
+MY_NAME = u"Random Person" 
+
+ADDRESS = [u"123 Fake Street", u"Some City",
+           u"P0S T4L", u"Country"]
+           
 def main(): 
     """A Simple example of how to use Fudge.
     
     This will help drive the API design."""
     
-    FLOAT_TYPE = registry.DEFAULT_REGISTRY[registry.FLOAT_TYPE_ID]                                    
-    BYTEARRAY_TYPE = registry.DEFAULT_REGISTRY[registry.BYTEARRAY_TYPE_ID]                                    
+    MSG_TYPE = registry.DEFAULT_REGISTRY[types.FUDGEMSG_TYPE_ID]                                    
     
     m = Message()
      
     m.add(MY_NAME, name=u"name")
     m.add(19801231L, ordinal=4, name=u"dob" )
-    m.add(10, ordinal=32, name=u"mark a")
-    m.add(20, ordinal=33, name=u"mark b")
-    m.add(30, ordinal=34,name=u"mark c")
-    m.add(2.0, ordinal=64, name=u"average a", type_=FLOAT_TYPE)
-    m.add(1.0, ordinal=65, name=u"average b", type_=FLOAT_TYPE) 
-    m.add(str('\x00\x01\x02\x03\x04'), name=u"bar", type_=BYTEARRAY_TYPE)
-    m.add(str('\x00\x01\x02\x03'), name=u"bar2", type_=BYTEARRAY_TYPE)
+    
+    submsg = Message()
+    for line, ordinal in zip(ADDRESS, range(len(ADDRESS))):
+        submsg.add(line, ordinal=ordinal)
+    m.add(submsg, name=u"address", type_=MSG_TYPE)
     e = Envelope(m) 
     
     print "Message:"
