@@ -27,11 +27,11 @@ them, and are returned as the contents of decoded Fudge `Message`s
 """
 from fudge import codecs
 from fudge import prefix
-from fudge import registry
+from fudge.registry import DEFAULT_REGISTRY
 from fudge import types
 from fudge import utils
 
-REGISTRY = registry.DEFAULT_REGISTRY
+import fudge # For message.Message
 
 class Field:
     """A Concrete field suitable for including into a Fudge Message"""
@@ -51,7 +51,7 @@ class Field:
         self.name = name
         self.value = value
 
-    def size(self, taxonomy = None):
+    def size(self, taxonomy=None):
         """Calculate the size that the field will take up in the message.
 
         Arguments:
@@ -78,8 +78,12 @@ class Field:
             
         if self.type_.is_variable_sized:
             # We store a variable sized length and then the value itself
-            value_size = self.type_.calc_size(self.value)
-            size = size + bytes_for_value_length(value_size) + value_size
+            if self.is_type(types.FUDGEMSG_TYPE_ID):
+                # sub-message, need to be taxonomy aware
+                value_length = self.type_.calc_size(self.value, taxonomy)
+            else:
+                value_length = self.type_.calc_size(self.value)
+            size = size + bytes_for_value_length(value_length) + value_length
         else:
             size = size + self.type_.fixed_size
         return size
@@ -113,7 +117,7 @@ class Field:
         variable_width = 0
         if self.type_.is_variable_sized:
             fixed_width = False
-            if self.type_ is REGISTRY[types.FUDGEMSG_TYPE_ID]:
+            if self.is_type(types.FUDGEMSG_TYPE_ID):
                 # sub-message, need to be taxonomy aware
                 value_length = self.type_.calc_size(self.value, taxonomy)
             else:
@@ -140,8 +144,8 @@ class Field:
         if not fixed_width:
             encode_value_length(value_length, writer)
 
-        if self.type_ is REGISTRY[types.FUDGEMSG_TYPE_ID]:
-            writer.write(self.type_.encoder(self.value, taxonomy))
+        if self.is_type(types.FUDGEMSG_TYPE_ID):
+            self.value.encode(writer, taxonomy)
         else:
             writer.write(self.type_.encoder(self.value))
 
@@ -167,7 +171,8 @@ class Field:
         fixedwidth, variablewidth, has_ordinal, has_name = \
                 prefix.decode_prefix(ord(encoded[pos]))
         type_id = ord(encoded[pos + 1])
-        field_type = REGISTRY[type_id]
+        # TODO(jamesc) - need to handle user supplied registries
+        field_type = DEFAULT_REGISTRY[type_id]
         pos = pos + 2
 
         # ordinal
@@ -191,7 +196,10 @@ class Field:
             pos = pos + field_type.fixed_size
         else:
             value_length = decode_value_length(encoded[pos:], variablewidth)
-            value = field_type.decoder(encoded[pos+1:pos+value_length+1])
+            if type_id == types.FUDGEMSG_TYPE_ID:
+                value = fudge.message.Message.decode(encoded[pos+1:pos+value_length+1], taxonomy)
+            else:
+                value = field_type.decoder(encoded[pos+1:pos+value_length+1])
             pos = pos + value_length + bytes_for_value_length(value_length)
 
         field = Field(field_type, ordinal, name, value)
@@ -250,3 +258,4 @@ def decode_value_length(encoded, width):
         return codecs.dec_short(encoded[0:2])
     else:
         return codecs.dec_int(encoded[0:4])
+            

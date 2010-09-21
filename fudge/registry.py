@@ -115,9 +115,11 @@ class Registry(object):
         
         self._add(FieldType(types.STRING_TYPE_ID, unicode, True, 0, \
                 codecs.enc_unicode, codecs.dec_unicode, types.size_unicode))
-
-        self._add(FieldType(types.FUDGEMSG_TYPE_ID, None, True, 
-                None, None, calc_size = lambda x : x.size()))
+        
+        # For FUDGEMSG, we shortcut the call to enc, dec
+        self._add(FieldType(types.FUDGEMSG_TYPE_ID, None, True,  0, \
+                None, None, \
+                calc_size = lambda x, taxonomy : x.size(taxonomy=taxonomy)))
 
         self._add(FieldType(types.BYTEARRAY4_TYPE_ID, str, False, 4, \
                 codecs.enc_str, codecs.dec_str))

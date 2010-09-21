@@ -24,22 +24,21 @@ import struct
 from fudge.field import Field
 from fudge import registry
 
-
 HEADER_PACKING = "!BBhl"
 
-REGISTRY = registry.DEFAULT_REGISTRY
-
-class Message(object): 
+class Message(object):
     """A Fudge Message.
-    
+
     """
-    
-    def __init__(self):
+
+    def __init__(self, registry=registry.Registry()):
         self.fields = []
-    
+        self.registry = registry
+
+
     def __str__(self):
         return "Message[fields=%s]"%self.fields
-            
+
     def size(self, taxonomy=None):
         """Compute the size for the fields in the message."""
         size = 0
@@ -51,61 +50,69 @@ class Message(object):
         """Add a new value to the message"""
         if not type_:
             # Try and work it out
-            type_ = REGISTRY.type_by_class(value, class_=class_)
+            type_ = self.registry.type_by_class(value, class_=class_)
 
-        type_ = REGISTRY.narrow(type_, value)
+        type_ = self.registry.narrow(type_, value)
         self._add_field(Field(type_, ordinal, name, value),)
-    
+
     def _add_field(self, field):
-        self.fields.append(field) 
-        
+        self.fields.append(field)
+
     def encode(self, writer, taxonomy=None):
         for field in self.fields:
             field.encode(writer, taxonomy)
-             
+
     @classmethod
     def decode(cls, encoded, taxonomy=None):
         message = Message()
         while encoded:
-            next_field, num_read = Field.decode(encoded, taxonomy) 
+            next_field, num_read = Field.decode(encoded, taxonomy)
             message._add_field(next_field)
             encoded = encoded[num_read:]
         return message
-         
+
 class Envelope(object):
     """A Fudge envelope.
-    
+
     This contains a message, and holds the metadata for the message (Schema
     Version and Taxonomy used)"""
-    def __init__(self, message, directives=0, schema_version=0, taxonomy=0):
+    def __init__(self, message, directives=0, schema_version=0, taxonomy_resolver=None):
         self.message = message
         self.schema_version = schema_version
         self.directives = directives
-        self.taxonomy = taxonomy
-
+        self.taxonomy_resolver = None
 
     def __str__(self):
-        return "Envelope(%r, %r, %r, %r)"% \
-            (self.directives, self.schema_version, self.taxonomy, self.message)
+        return "Envelope(directives=%r, schem_version=%r)"% \
+            (self.directives, self.schema_version)
 
-    def encode(self, writer):
+    def encode(self, writer, taxonomy_id=0):
         """Encode an envelope"""
 
-        size = self.message.size() + struct.calcsize(HEADER_PACKING)
-        writer.write(struct.pack(HEADER_PACKING, self.directives, \
-                self.schema_version, self.taxonomy, size))
+        taxonomy = None
+        if taxonomy_id:
+            taxonomy = self.taxonomy_resolver.resolve_taxonomy(taxonomy_id)
+        size = self.message.size(taxonomy) + struct.calcsize(HEADER_PACKING)
 
-        self.message.encode(writer)
+        writer.write(struct.pack(HEADER_PACKING, self.directives, \
+                self.schema_version, taxonomy_id, size))
+
+        self.message.encode(writer, taxonomy)
 
     @classmethod
-    def decode(cls, encoded):
+    def decode(cls, encoded, taxonomy_resolver=None):
         # TODO(jamesc) - throw exception on message length < 8
         assert len(encoded) >= 8
-        (directives, schema_version, taxonomy, size) = \
+        (directives, schema_version, taxonomy_id, size) = \
                 struct.unpack(HEADER_PACKING, encoded[:8])
-        width = size - struct.calcsize(HEADER_PACKING) 
-        
-        assert len(encoded) == width + 8
-        message = Message.decode(encoded[8:], taxonomy=taxonomy) 
-        envelope = Envelope(message, directives, schema_version, taxonomy)
+        width = size - struct.calcsize(HEADER_PACKING)
+
+        # TODO(jamesc) - assert doesn't work for submsg
+        # assert len(encoded) == width + 8
+        taxonomy = None
+        if taxonomy_resolver:
+            taxonomy = taxonomy_resolver.resolve_taxonomy[taxonomy_id]
+
+        message = Message.decode(encoded[8:], taxonomy=taxonomy)
+        envelope = Envelope(message, directives, schema_version, taxonomy_resolver)
         return envelope
