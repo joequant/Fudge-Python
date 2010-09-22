@@ -22,7 +22,7 @@
 * Use taxonomy to calculate field size and encode/decode - DONE
  - Still to check that the logic for using taxonomies is ok.
 
-* encode/decode of Message objects
+* encode/decode of Message objects - DONE
 
 * Context object
   * Allow for custom registry
@@ -38,7 +38,8 @@
 * simple dumper reading messages from disk and printing it - DONE
 
 * float encoding (NaN different in C impl ?)
-* unicode encoding (deal with modifiedUTF-8)
+* unicode encoding (deal with modified UTF-8)
+* int/short encoding
 
 * dec_ functions should return bytes read to simplify callers ?
 * Move encode/decode to context from Message/Field as in .Net impl ?
@@ -52,6 +53,3 @@ Taxonomies:
 * What to do if taxonomy in message, but not supplied on decode ?
 * Is 0 a valid taxonomy ID ?  If there are ordinals and ID==0 then I should assume a taxonomy ?
 
-zero-length variable length fields - Variable width in prefix is 0 ? e.g. for an empty string, no name, no ordinal:
-
-'00
