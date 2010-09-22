@@ -21,6 +21,7 @@
 import unittest
 
 from fudge.prefix import *
+from fudge import utils
 
 class FieldPrefixTests(unittest.TestCase):
     def setUp(self):
@@ -71,3 +72,21 @@ class FieldPrefixTests(unittest.TestCase):
         self.assertEquals(4, variablewidth)
         byte = encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name)
         self.assertEquals(FOUR, byte)
+
+    def test_calc_variable_length(self):
+        """Check we use the correct variable width for a variety
+        of value lengths"""
+
+        self.assertEquals(0, calculate_variable_width(0))
+
+        self.assertEquals(1, calculate_variable_width(1 ))
+        self.assertEquals(1, calculate_variable_width(utils.MAX_BYTE))
+
+        self.assertEquals(2, calculate_variable_width(utils.MAX_BYTE+1))
+        self.assertEquals(2, calculate_variable_width(utils.MAX_SHORT))
+
+        self.assertEquals(4, calculate_variable_width(utils.MAX_SHORT+1))
+        self.assertEquals(4, calculate_variable_width(utils.MAX_INT))
+
+        self.assertRaises(AssertionError, calculate_variable_width, utils.MAX_INT+1)
+        self.assertRaises(AssertionError, calculate_variable_width, -1)

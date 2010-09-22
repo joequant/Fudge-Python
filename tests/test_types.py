@@ -1,4 +1,4 @@
-# 
+#
 # Copyright CERN, 2010.
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -29,21 +29,24 @@ class testTypes(unittest.TestCase):
 
     def test_unicode(self):
         self.assertEquals(0, size_unicode(''))
-        
-        unicode_val = u'Ma\xf1ana' 
-        self.assertEquals(7, size_unicode(unicode_val)) 
-        
+
+        unicode_val = u'Ma\xf1ana'
+        self.assertEquals(7, size_unicode(unicode_val))
+
         unicode_val = u'Ma\u00f1ana'
-        self.assertEquals(7, size_unicode(unicode_val)) 
-        
+        self.assertEquals(7, size_unicode(unicode_val))
+
     def test_str(self):
-        self.assertEquals(5, size_str('abcde')) 
+        self.assertEquals(5, size_str('abcde'))
         self.assertEquals(0, size_str(''))
-    
+
     def test_name_for_type(self):
         self.assertEquals('byte', name_for_type(BYTE_TYPE_ID))
         self.assertEquals('string', name_for_type(STRING_TYPE_ID))
-        
-        self.assertEquals('indicator', name_for_type(0)) 
+
+        self.assertEquals('indicator', name_for_type(0))
         self.assertEquals('unknown(200)', name_for_type(200))
-            
+
+    def test_indicator_repr(self):
+        self.assertEquals("Indicator()", "%r"%INDICATOR)
+

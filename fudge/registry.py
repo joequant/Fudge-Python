@@ -23,14 +23,19 @@ from fudge import codecs
 from fudge import types
 from fudge import utils
 
-import fudge
-
 class UnknownTypeError(Exception):
+    """An Unknown Type has been used
+
+    TODO(jamesc)-We should be able to handle Unknown types
+    in the registry."""
     pass
 
 
 class FieldType(object):
-    """"""
+    """The descriptor for a Fudge Field type.
+
+    TODO(jamesc)- proper objects rather than this dispatch style?
+    """
     def __init__(self, type_id, class_, is_variable_sized, fixed_size,
                  encoder=None, decoder=None, calc_size=None):
         """Create a new Field type.
@@ -68,7 +73,7 @@ class FieldType(object):
             assert self.calc_size
 
     def __repr__(self):
-        return "FieldType[id=%r, classname=%r]"%(self.type_id, self.classname)
+        return "FieldType[id=%r, classname=%r]"% (self.type_id, self.classname)
 
 
 def fullname(class_):
@@ -86,7 +91,8 @@ class Registry(object):
         self.types_by_id = {}
         self.types_by_class = {}
 
-        self._add(FieldType(types.INDICATOR_TYPE_ID, 'fudge.types.Indicator', False, 0, \
+        self._add(FieldType(types.INDICATOR_TYPE_ID, 'fudge.types.Indicator', \
+                False, 0, \
                 codecs.enc_indicator, codecs.dec_indicator, lambda x : 0))
 
         self._add(FieldType(types.BOOLEAN_TYPE_ID, bool, False, 1, \

@@ -88,7 +88,7 @@ def name_for_type(type_id):
     try:
         return FUDGE_TYPE_NAMES[type_id]
     except KeyError:
-        return 'unknown(%s)'%type_id
+        return 'unknown(%s)'% type_id
 
 
 def size_unicode(arg):
@@ -104,7 +104,6 @@ class Indicator(object):
 
     This is a zero-length type, and we normally just return
     this singleton instance."""
-    pass
 
     def __repr__(self):
         return "Indicator()"

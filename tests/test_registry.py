@@ -27,6 +27,10 @@ from fudge import utils
 
 import uuid
 
+class TestClass(object):
+    """Used for testing `fudge.registry.fullname`"""
+    pass
+
 class testRegistry(unittest.TestCase):
 
     def setUp(self):
@@ -65,7 +69,7 @@ class testRegistry(unittest.TestCase):
     def test_type_by_class_names(self):
         s =str('foo')
         self.assertEquals(s.__class__.__name__, 'str')
-        
+
         self.assertEquals(self.STRING_TYPE, self.reg.type_by_class(s, classname='unicode'))
 
     def test_type_by_class_numbers(self):
@@ -130,3 +134,18 @@ class testRegistry(unittest.TestCase):
 
         array = 'x'*27
         self.assertEquals(self.reg[types.BYTEARRAY_TYPE_ID], self.reg.narrow(self.reg[types.BYTEARRAY_TYPE_ID], array))
+
+    def test_type_repr(self):
+        f = FieldType(1, int, False, 2)
+        self.assertEquals("FieldType[id=1, classname='int']", "%r"%f)
+
+    def test_fullname_builtin(self):
+        """Check that the fullname stuff works for builtins"""
+        self.assertEquals('str', fullname(str))
+        self.assertEquals('long', fullname(long))
+
+    def test_fullname_custom(self):
+         """Check that the fullname stuff works for builtins"""
+         self.assertEquals('str', fullname(str))
+         self.assertEquals('long', fullname(long))
+         self.assertEquals('tests.test_registry.TestClass', fullname(TestClass))

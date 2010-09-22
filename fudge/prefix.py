@@ -17,9 +17,27 @@
 # under the License.
 #
 
+"""Methods for dealing with Fudge Field Prefixes:
+
+<http://www.fudgemsg.org/display/FDG/Encoding+Specification#EncodingSpecification-FieldPrefix>
+"""
 from fudge import utils
 
 def decode_prefix(byte):
+    """Decode a byte according to the Field Prefix encoding
+    scheme.
+
+    Arguments:
+        byte: the encoded representation of the prefix
+
+    Return:
+        fixedwidth: Is the field fixed width (bool)
+        variablewidth: if not fixed width, the number of bytes
+            needed to encode the value width (1, 2 or 4)
+        has_ordinal: The field has an ordinal encoded  (bool)
+        has_name: This field has a name encoded (bool)
+
+    """
     fixedwidth = (byte & 0x80) != 0
     has_name = (byte & 0x08) != 0
     has_ordinal = (byte & 0x10) != 0
@@ -29,6 +47,20 @@ def decode_prefix(byte):
     return fixedwidth, variablewidth, has_ordinal, has_name
 
 def encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name):
+    """Encode a Field Prefix byte according to the Field Prefix
+    encoding scheme.
+
+    Arguments:
+        fixedwidth: Is the field fixed width (bool)
+        variablewidth: if not fixed width, the number of bytes
+            needed to encode the value width (1, 2 or 4)
+        has_ordinal: The field has an ordinal encoded  (bool)
+        has_name: This field has a name encoded (bool)
+
+    Return:
+        The Field Prefix (str of length 1)
+
+    """
     byte = 0x00
     if fixedwidth:
         byte = byte | 0x80
@@ -45,9 +77,23 @@ def encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name):
     return byte
 
 def calculate_variable_width(length):
+    """For a value length, calculate how many
+    bytes are needed to hold the length
+
+    Arguments:
+        length : Length of value (0 <= length <= MAX_INT)
+
+    Return:
+        number of bytes needed to hold it (1, 2 or 4)
+
+    """
+    assert length >= 0 and length <= utils.MAX_INT
+
+    if length == 0:
+        return 0
     if length <= utils.MAX_BYTE:
         return 1
-    elif length < utils.MAX_SHORT:
+    elif length <= utils.MAX_SHORT:
         return 2
     else:
         return 4
