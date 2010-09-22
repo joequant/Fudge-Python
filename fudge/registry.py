@@ -101,7 +101,7 @@ class Registry(object):
                 codecs.enc_byte, codecs.dec_byte))
         self._add(FieldType(types.SHORT_TYPE_ID, int, False, 2, \
                 codecs.enc_short, codecs.dec_short))
-        self._add(FieldType(types.INT_TYPE_ID, int, False, 4, \
+        self._add(FieldType(types.INT_TYPE_ID, 'int', False, 4, \
                 codecs.enc_int, codecs.dec_int))
         self._add(FieldType(types.LONG_TYPE_ID, long, False, 8, \
                 codecs.enc_long, codecs.dec_long))

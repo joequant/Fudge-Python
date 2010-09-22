@@ -21,7 +21,6 @@
 
 <http://www.fudgemsg.org/display/FDG/Encoding+Specification#EncodingSpecification-FieldPrefix>
 """
-from fudge import utils
 
 def decode_prefix(byte):
     """Decode a byte according to the Field Prefix encoding
@@ -75,25 +74,3 @@ def encode_prefix(fixedwidth, variablewidth, has_ordinal, has_name):
             varwidth = variablewidth
         byte = byte | varwidth << 5
     return byte
-
-def calculate_variable_width(length):
-    """For a value length, calculate how many
-    bytes are needed to hold the length
-
-    Arguments:
-        length : Length of value (0 <= length <= MAX_INT)
-
-    Return:
-        number of bytes needed to hold it (1, 2 or 4)
-
-    """
-    assert length >= 0 and length <= utils.MAX_INT
-
-    if length == 0:
-        return 0
-    if length <= utils.MAX_BYTE:
-        return 1
-    elif length <= utils.MAX_SHORT:
-        return 2
-    else:
-        return 4

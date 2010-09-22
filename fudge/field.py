@@ -71,10 +71,10 @@ class Field:
                 has_ordinal = True
                 has_name = False
         if has_ordinal:
-            size = size + 2
+            size += 2
         if has_name:
             # one for size prefix
-            size = size + 1 + types.size_unicode(self.name)
+            size += 1 + types.size_unicode(self.name)
 
         if self.type_.is_variable_sized:
             # We store a variable sized length and then the value itself
@@ -83,9 +83,9 @@ class Field:
                 value_length = self.type_.calc_size(self.value, taxonomy)
             else:
                 value_length = self.type_.calc_size(self.value)
-            size = size + bytes_for_value_length(value_length) + value_length
+            size += bytes_for_value_length(value_length) + value_length
         else:
-            size = size + self.type_.fixed_size
+            size += self.type_.fixed_size
         return size
 
     def is_type(self, type_id):
@@ -100,12 +100,12 @@ class Field:
 
     def __repr__(self):
         if self.name and not self.ordinal:
-            return "Field[%s:%s-%s]"%(self.name, self.type_, self.value)
+            return "Field[%s:%s-%s]"% (self.name, self.type_, self.value)
         elif self.name and self.ordinal:
-            return "Field[%s,%d:%s-%s]"%(self.name, self.ordinal, \
+            return "Field[%s,%d:%s-%s]"% (self.name, self.ordinal, \
                     self.type_, self.value)
         else:
-            return "Field[%s-%s]"%(self.type_, self.value)
+            return "Field[%s-%s]"% (self.type_, self.value)
 
     def encode(self, writer, taxonomy=None):
         """Encode a Field.
@@ -141,7 +141,7 @@ class Field:
             assert len(name) <= utils.MAX_BYTE
             writer.write(codecs.enc_name(name))
 
-        if not fixed_width:
+        if not fixed_width and value_length:
             encode_value_length(value_length, writer)
 
         if self.is_type(types.FUDGEMSG_TYPE_ID):
@@ -164,61 +164,69 @@ class Field:
             Error: if there is not enough bytes in the array for the field.
 
         """
-        assert len(encoded) > 2
+        assert len(encoded) >= 2
 
         # prefix
         pos = 0
         fixedwidth, variablewidth, has_ordinal, has_name = \
                 prefix.decode_prefix(ord(encoded[pos]))
-        type_id = ord(encoded[pos + 1])
+        pos += 1
+        type_id = ord(encoded[pos])
         # TODO(jamesc) - need to handle user supplied registries
         field_type = DEFAULT_REGISTRY[type_id]
-        pos = pos + 2
+        pos += 1
 
         # ordinal
         ordinal = None
         if has_ordinal:
             ordinal = codecs.dec_short(encoded[pos:])
-            pos = pos + 2
+            pos += 2
 
         # name
         name = None
         if has_name:
             name_len = ord(encoded[pos])
-            name = codecs.dec_unicode(encoded[pos+1:pos+name_len+1])
-            pos = pos + name_len + 1 # length encoded as 1 byte
+            pos += 1 # length encoded as 1 byte
+            name = codecs.dec_unicode(encoded[pos:pos+name_len])
+            pos += name_len
         elif has_ordinal and taxonomy:
             name = taxonomy.get_name(ordinal)
 
         # value
         if fixedwidth:
             value = field_type.decoder(encoded[pos:])
-            pos = pos + field_type.fixed_size
+            pos += field_type.fixed_size
         else:
             value_length = decode_value_length(encoded[pos:], variablewidth)
+
+            pos += variablewidth
             if type_id == types.FUDGEMSG_TYPE_ID:
-                value = fudge.message.Message.decode(encoded[pos+1:pos+value_length+1], taxonomy)
+                value = fudge.message.Message.decode(encoded[pos:pos+value_length], taxonomy)
             else:
-                value = field_type.decoder(encoded[pos+1:pos+value_length+1])
-            pos = pos + value_length + bytes_for_value_length(value_length)
+                value = field_type.decoder(encoded[pos:pos+value_length])
+            pos += value_length
 
         field = Field(field_type, ordinal, name, value)
         return field, pos
 
-def bytes_for_value_length(value_length):
-    """Given the length of a value return the min numbers of
-    bytes required to encode it.
+def bytes_for_value_length(length):
+    """For a value length, calculate how many
+    bytes are needed to hold the length
 
     Arguments:
-       value_length: The length of the value object in bytes
+        length : Length of value (0 <= length <= MAX_INT)
 
     Return:
-       Mimimum number of bytes required to hold this length
+        number of bytes needed to hold it (1, 2 or 4)
 
     """
-    if value_length <= utils.MAX_BYTE:
+    assert length >= 0 and length <= utils.MAX_INT
+
+    if length == 0:
+        return 0
+    if length <= utils.MAX_BYTE:
         return 1
-    elif value_length <= utils.MAX_SHORT:
+    elif length <= utils.MAX_SHORT:
         return 2
     else:
         return 4
@@ -233,6 +241,8 @@ def encode_value_length(value_length, writer):
         writer: the writer object to write the length to
 
     """
+    if not value_length:
+        return # Don't encode zero length
     if value_length <= utils.MAX_BYTE:
         writer.write(codecs.enc_byte(value_length))
     elif value_length <= utils.MAX_SHORT:
@@ -252,7 +262,11 @@ def decode_value_length(encoded, width):
         The decoded value length
 
     """
-    if width == 1:
+    assert width in (0, 1, 2, 4)
+
+    if width == 0:
+        return 0
+    elif width == 1:
         return codecs.dec_byte(encoded[0])
     elif width == 2:
         return codecs.dec_short(encoded[0:2])

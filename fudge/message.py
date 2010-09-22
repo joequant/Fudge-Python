@@ -83,7 +83,7 @@ class Envelope(object):
         self.taxonomy_resolver = None
 
     def __str__(self):
-        return "Envelope(directives=%r, schem_version=%r)"% \
+        return "Envelope(directives=%r, schema version=%r)"% \
             (self.directives, self.schema_version)
 
     def encode(self, writer, taxonomy_id=0):

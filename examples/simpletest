@@ -58,14 +58,14 @@ def main():
     e.encode(writer)
     bytes = writer.getvalue()
 
+    print "Contacts message encoded as a %d byte Fudge message"% len(bytes)
     print "Encoded:"
     print "  %s"%repr(bytes)
 
     f = Envelope.decode(bytes)
-    print "Decoded:"
-    print "  Directives : %d"%f.directives
-    print "  Schema Version : %d"%f.schema_version
-    print "  Taxonomy : %d"%f.taxonomy
+    print "Decoded Fudge message with schema version %d and %d fields"% \
+         (f.schema_version, len(f.fields))
+
     print "Message:"
     for f in m.fields:
         print "  %s"%f

@@ -84,10 +84,9 @@ def _unpack(fmt, encoded):
 
 def dec_indicator(encoded):
     """decode a Fudge Indicator.
-    
+
     Returns:
        A Singleton INDICATOR object"""
-    assert len(encoded) == 0
     return INDICATOR
 
 def dec_bool(encoded):

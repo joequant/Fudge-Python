@@ -66,17 +66,19 @@ class PrettyPrinter(object):
             depth:  The depth of this message/sub-message (Default:0)
 
         """
-        fields = message.fields
-        max_typename_width = -1
+        if not message.fields:
+            return
+        num_fields = len(message.fields)
+
         fieldspecs = []
-        for field, index in zip(fields, range(0, len(fields))):
+        for field, index in zip(message.fields, range(num_fields)):
             fieldspec = self._get_fieldspec(field, index, depth)
             fieldspecs.append(fieldspec)
 
         max_fieldspec_width = len(max(fieldspecs, key=str.__len__))
-        max_typename_width = len(max(map(lambda x : types.name_for_type(x.type_.type_id), fields), key=str.__len__))
+        max_typename_width = len(max(map(lambda x : types.name_for_type(x.type_.type_id), message.fields), key=str.__len__))
 
-        for field, fieldspec, index in  zip(fields, fieldspecs, range(0, len(fields))) :
+        for field, fieldspec, index in  zip(message.fields, fieldspecs, range(num_fields)) :
             self._format_field(field, fieldspec, index, depth, \
                     max_fieldspec_width, max_typename_width)
 
@@ -124,7 +126,7 @@ class PrettyPrinter(object):
         self._writer.write('[')
         self._writer.write(', '.join(map(lambda x : str(x), value[:truncate])))
         if truncate < num_elements:
-            self._writer.write(" ... %s more"%(num_elements - truncate))
+            self._writer.write(" ... %d more"%(num_elements - truncate))
         self._writer.write(']')
 
     def _write_typed_value(self, type_, value):
