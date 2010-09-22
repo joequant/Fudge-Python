@@ -100,12 +100,12 @@ class Field:
 
     def __repr__(self):
         if self.name and not self.ordinal:
-            return "Field[%s:%s-%s]"% (self.name, self.type_, self.value)
+            return "Field[%s:%s-'%s']"% (self.name, self.type_, self.value)
         elif self.name and self.ordinal:
-            return "Field[%s,%d:%s-%s]"% (self.name, self.ordinal, \
+            return "Field[%s,%d:%s-'%s']"% (self.name, self.ordinal, \
                     self.type_, self.value)
         else:
-            return "Field[%s-%s]"% (self.type_, self.value)
+            return "Field[%s-'%s']"% (self.type_, self.value)
 
     def encode(self, writer, taxonomy=None):
         """Encode a Field.
@@ -241,6 +241,8 @@ def encode_value_length(value_length, writer):
         writer: the writer object to write the length to
 
     """
+    assert value_length >= 0 and value_length <= utils.MAX_INT
+
     if not value_length:
         return # Don't encode zero length
     if value_length <= utils.MAX_BYTE:

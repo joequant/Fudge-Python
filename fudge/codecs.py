@@ -66,7 +66,7 @@ def enc_double(val):
 def enc_unicode(val):
     """encode a single unicode string"""
     utf8 = val.encode("utf-8")
-    fmt = "!%ss"%len(utf8)
+    fmt = "!%ss"% len(utf8)
     return struct.pack(fmt, utf8)
 
 def enc_str(val):
@@ -95,19 +95,23 @@ def dec_bool(encoded):
 
 def dec_byte(encoded):
     """Decode a single unsigned byte"""
-    return _unpack('!B', encoded)
+    i = _unpack('!B', encoded)
+    return i % 2**8
 
 def dec_short(encoded):
     """Decode a single signed short"""
-    return _unpack('!h', encoded)
+    i = _unpack('!h', encoded)
+    return (i + 2**15) % 2**16 - 2**15
 
 def dec_int(encoded):
     """Decode a single signed int"""
-    return _unpack('!l', encoded)
+    i = _unpack('!l', encoded)
+    return (i + 2**31) % 2**32 - 2**31
 
 def dec_long(encoded):
     """Decode a single signed long"""
-    return _unpack('!q', encoded)
+    i = _unpack('!q', encoded)
+    return (i + 2**63) % 2**64 - 2**63
 
 def dec_float(encoded):
     """Decode a single signed float"""
@@ -119,7 +123,7 @@ def dec_double(encoded):
 
 def dec_unicode(encoded):
     """Decode a single unicode string"""
-    fmt = '!%ss'%len(encoded)
+    fmt = '!%ss'% len(encoded)
     utf8 = struct.unpack(fmt, encoded)[0]
     return unicode(utf8, "utf-8")
 

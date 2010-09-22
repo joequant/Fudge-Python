@@ -65,6 +65,48 @@ class testField(unittest.TestCase):
         self.assertRaises(AssertionError, bytes_for_value_length, utils.MAX_INT+1)
         self.assertRaises(AssertionError, bytes_for_value_length, -1)
 
+    def assertValueEncoded(self, expected, provided):
+        """Internal routine to check that encoding a value length is done
+        correctly.
+
+        """
+        output = cStringIO.StringIO()
+        encode_value_length(provided, output)
+        self.assertEquals(expected, output.getvalue())
+
+    def test_encode_value_length(self):
+        """Check the routines that encode field value lengths onto
+        the stream"""
+
+        self.assertValueEncoded('', 0)
+        self.assertValueEncoded('\x01', 1)
+        self.assertValueEncoded('\xff', utils.MAX_BYTE)
+
+        self.assertValueEncoded('\x01\x00', utils.MAX_BYTE+1)
+        self.assertValueEncoded('\x7f\xff', utils.MAX_SHORT)
+
+        self.assertValueEncoded('\x00\x00\x80\x00', utils.MAX_SHORT+1)
+        self.assertValueEncoded('\x7f\xff\xff\xff', utils.MAX_INT)
+
+        self.assertRaises(AssertionError, encode_value_length, utils.MAX_INT+1, cStringIO.StringIO())
+        self.assertRaises(AssertionError, encode_value_length, -1, cStringIO.StringIO())
+
+    def test_decode_value_length(self):
+        """Check the routines that encode field value lengths onto
+        the stream"""
+
+        self.assertEquals(0, decode_value_length('', 0))
+        self.assertEquals(1, decode_value_length('\x01', 1))
+        self.assertEquals(utils.MAX_BYTE, decode_value_length('\xff', 1))
+
+        self.assertEquals(utils.MAX_BYTE+1, decode_value_length('\x01\x00', 2))
+        self.assertEquals(utils.MAX_SHORT, decode_value_length('\x7f\xff', 2))
+
+        self.assertEquals(utils.MAX_SHORT+1, decode_value_length('\x00\x00\x80\x00', 4))
+        self.assertEquals(utils.MAX_INT, decode_value_length('\x7f\xff\xff\xff', 4))
+
+        self.assertRaises(AssertionError, decode_value_length, '\x00\x00\x00', 3)
+
     def test_size_no_opts_fixed(self):
         """Test the simplest case"""
         f = Field(BYTE_FIELD, None, None, 0x01)
@@ -76,18 +118,30 @@ class testField(unittest.TestCase):
         self.encodeEquals('800480000000', f)
 
     def test_size_no_opts_variable(self):
+        encoded = '200e03'+u'foo'.encode('hex')
+
         f= Field(STRING_FIELD, None, None, u'foo')
         self.assertEquals(6, f.size())
-        self.encodeEquals('200e03'+u'foo'.encode('hex'), f)
+        self.encodeEquals(encoded, f)
+
+        res, bytes =  Field.decode(encoded.decode('hex'))
+        self.assertEquals(6, res.size())
+        self.assertEquals(u'foo', res.value)
+        self.assertEquals(None, res.ordinal)
+        self.assertEquals(None, res.name)
 
     def test_size_ordinal(self):
         f = Field(BYTE_FIELD, 0x01, None, 0x01)
         self.assertEquals(5, f.size())
         self.encodeEquals('9002000101', f)
 
+        res, bytes =  Field.decode('9002000101'.decode('hex'))
+        self.assertEquals(5, res.size())
+        self.assertEquals(0x01, res.value)
+        self.assertEquals(0x01, res.ordinal)
+
         f = Field(INT_FIELD, 0x02, None, 0x80000001)
         self.encodeEquals('9004000280000001', f)
-
         self.assertEquals(8, f.size())
 
     def test_size_name(self):

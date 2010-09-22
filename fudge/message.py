@@ -37,7 +37,7 @@ class Message(object):
 
 
     def __str__(self):
-        return "Message[fields=%s]"%self.fields
+        return "Message[fields=%s]"% self.fields
 
     def size(self, taxonomy=None):
         """Compute the size for the fields in the message."""
