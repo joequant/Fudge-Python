@@ -65,10 +65,10 @@ def main():
     f = Envelope.decode(bytes)
     print "Decoded Fudge message with schema version %d and %d fields"% \
          (f.schema_version, len(f.fields))
-
+    m = f.message
     print "Message:"
-    for f in m.fields:
-        print "  %s"%f
+    for field in m.fields:
+        print "  %s"%field
 
 if __name__ == '__main__':
     main()

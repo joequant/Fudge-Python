@@ -123,7 +123,7 @@ class Registry(object):
 
         self._add(FieldType(types.FLOAT_TYPE_ID, float, False, 4, \
                 codecs.enc_float, codecs.dec_float))
-        self._add(FieldType(types.DOUBLE_TYPE_ID, float, False, 8, \
+        self._add(FieldType(types.DOUBLE_TYPE_ID, None, False, 8, \
                 codecs.enc_double, codecs.dec_double))
         self._add(FieldType(types.FLOATARRAY_TYPE_ID, None, True, 0, \
                 lambda x : codecs.enc_array(codecs.enc_float, x), \
