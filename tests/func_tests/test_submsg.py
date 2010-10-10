@@ -96,3 +96,41 @@ class TestSubMsg(unittest.TestCase):
         self.assertEquals(None, sub2.fields[1].name)
         self.assertEquals(828, sub2.fields[1].ordinal)
         self.assertAlmostEquals(82.769997, sub2.fields[1].value, 6)
+
+    def test_deeper_submsg(self):
+
+        m = Message()
+        m.add(types.INDICATOR, name=u"Indicator")
+        m.add(True, name=u"Boolean")
+
+        m.add(255, name=u"Byte")  # Huh - in the C code it's -128 which isn't a byte!
+        m.add(-32768, name=u"Short")
+        m.add(2147483647, name=u"Int")
+        m.add(9223372036854775807L, name=u"Long")
+        m.add(1.23456, name=u"Float")
+
+
+        #TEST_EQUALS_INT( fields [  8 ].type, FUDGE_TYPE_FUDGE_MSG );
+        #TEST_EQUALS_MEMORY( FudgeString_getData ( fields [  8 ].name ), 10, "ByteArrays", 10 );
+        #TEST_EQUALS_TRUE( ( bytemessage = fields [ 8 ].data.message ) != 0 );
+
+        m.add(1.2345678, name=u"Double", type_=registry.DEFAULT_REGISTRY.type_by_id(types.DOUBLE_TYPE_ID))
+        m.add(u'', name=u"Empty String")
+        m.add(u'This is a string.', name="String")
+
+
+        #TEST_EQUALS_INT( fields [ 11 ].type, FUDGE_TYPE_FUDGE_MSG );
+        #TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 11 ].name ), 6, "Arrays", 6 );
+        #TEST_EQUALS_TRUE( ( arraysmessage = fields [ 11 ].data.message ) != 0 );
+
+        empty_message = Message()
+        m.add(empty_message, name=u'Null Message')
+
+        #TEST_EQUALS_INT( fields [ 12 ].type, FUDGE_TYPE_FUDGE_MSG );
+        #TEST_EQUALS_MEMORY( FudgeString_getData ( fields [ 12 ].name ), 12, "Null Message", 12 );
+        #TEST_EQUALS_TRUE( ( emptymessage = fields [ 12 ].data.message ) != 0 );
+
+        e = Envelope(m)
+        foo = open('foo', 'w')
+        e.encode(foo)
+        foo.close()
