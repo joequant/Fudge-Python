@@ -24,7 +24,7 @@ from fudge.message import Message, Envelope
 from fudge import registry
 from fudge import types
 
-from fudge.utils import render
+from fudge.utils import render, hexdump
 
 MY_NAME = u"Random Person"
 
@@ -60,7 +60,8 @@ def main():
 
     print "Contacts message encoded as a %d byte Fudge message"% len(bytes)
     print "Encoded:"
-    print "  %s"%repr(bytes)
+    dumper = hexdump.HexPrinter()
+    dumper.format(bytes)
 
     f = Envelope.decode(bytes)
     print "Decoded Fudge message with schema version %d and %d fields"% \
