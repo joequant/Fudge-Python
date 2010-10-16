@@ -113,10 +113,8 @@ class Field:
         This encodes Field Prefix, Type, Ordinal, Name, Data
 
         """
-        fixed_width = True
         variable_width = 0
         if self.type_.is_variable_sized:
-            fixed_width = False
             if self.is_type(types.FUDGEMSG_TYPE_ID):
                 # sub-message, need to be taxonomy aware
                 value_length = self.type_.calc_size(self.value, taxonomy)
@@ -132,8 +130,11 @@ class Field:
                 ordinal = tax_ord
                 name = None
 
-        writer.write(chr(prefix.encode_prefix(fixed_width, variable_width, \
-                ordinal is not None, name is not None)))
+        prefix_byte = prefix.encode_prefix(not self.type_.is_variable_sized, \
+                variable_width, ordinal is not None, name is not None)
+
+        # And write it out
+        writer.write(chr(prefix_byte))
         writer.write(codecs.enc_byte(self.type_.type_id))
         if ordinal:
             writer.write(codecs.enc_short(ordinal))
@@ -141,7 +142,7 @@ class Field:
             assert len(name) <= utils.MAX_BYTE
             writer.write(codecs.enc_name(name))
 
-        if not fixed_width and value_length:
+        if self.type_.is_variable_sized:
             encode_value_length(value_length, writer)
 
         if self.is_type(types.FUDGEMSG_TYPE_ID):
@@ -222,8 +223,6 @@ def bytes_for_value_length(length):
     """
     assert length >= 0 and length <= utils.MAX_INT
 
-    if length == 0:
-        return 0
     if length <= utils.MAX_BYTE:
         return 1
     elif length <= utils.MAX_SHORT:
@@ -243,8 +242,6 @@ def encode_value_length(value_length, writer):
     """
     assert value_length >= 0 and value_length <= utils.MAX_INT
 
-    if not value_length:
-        return # Don't encode zero length
     if value_length <= utils.MAX_BYTE:
         writer.write(codecs.enc_byte(value_length))
     elif value_length <= utils.MAX_SHORT:

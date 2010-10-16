@@ -263,6 +263,4 @@ class Registry(object):
             return fixed_bytelen[array_len]
         return self[types.BYTEARRAY_TYPE_ID]
 
-
-
 DEFAULT_REGISTRY = Registry()

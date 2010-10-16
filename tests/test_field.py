@@ -51,7 +51,7 @@ class testField(unittest.TestCase):
         """Check we use the correct variable width for a variety
         of value lengths"""
 
-        self.assertEquals(0, bytes_for_value_length(0))
+        self.assertEquals(1, bytes_for_value_length(1))
 
         self.assertEquals(1, bytes_for_value_length(1 ))
         self.assertEquals(1, bytes_for_value_length(utils.MAX_BYTE))
@@ -78,7 +78,7 @@ class testField(unittest.TestCase):
         """Check the routines that encode field value lengths onto
         the stream"""
 
-        self.assertValueEncoded('', 0)
+        self.assertValueEncoded('\x00', 0)
         self.assertValueEncoded('\x01', 1)
         self.assertValueEncoded('\xff', utils.MAX_BYTE)
 
@@ -191,8 +191,8 @@ class testField(unittest.TestCase):
     def test_empty_variable(self):
         "Test that empty variable length fields are encoded correctly."
         f = Field(STRING_FIELD, None, None, u'')
-        self.assertEquals(2, f.size())
-        self.encodeEquals('000e', f)
+        self.assertEquals(3, f.size())
+        self.encodeEquals('200e00', f)
 
         f2, bytes = Field.decode('\x00\x0e')
         self.assertEquals(2, bytes)
@@ -201,8 +201,8 @@ class testField(unittest.TestCase):
     def test_empty_intarray(self):
         "Test that empty variable length fields are encoded correctly."
         f = Field(INTARRAY_FIELD, None, None, [])
-        self.assertEquals(2, f.size())
-        self.encodeEquals('0008', f)
+        self.assertEquals(3, f.size())
+        self.encodeEquals('200800', f)
 
         f2, bytes = Field.decode('\x00\x08')
         self.assertEquals(2, bytes)
@@ -214,8 +214,8 @@ class testField(unittest.TestCase):
         m.add(u'')
         m.add(types.INDICATOR)
         f = Field(FUDGEMSG_FIELD, None, None, m)
-        self.assertEquals(7, f.size())
-        self.encodeEquals('200f04000e8000', f)
+        self.assertEquals(8, f.size())
+        self.encodeEquals('200f05200e008000', f)
 
         res, bytes = Field.decode('\x20\x0f\x04\x00\x0e\x80\x00')
         self.assertEquals(7, bytes)
