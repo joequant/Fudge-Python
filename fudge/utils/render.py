@@ -19,25 +19,11 @@
 # under the License.
 #
 
-"""Some utility functions, constants and classes"""
 import sys
 
 from  cStringIO import StringIO
 
 from fudge import types
-
-MIN_BYTE = 0
-MAX_BYTE = 255
-
-MIN_SHORT = -32768
-MAX_SHORT = 32767
-
-MIN_INT = -2147483648
-MAX_INT = 2147483647
-
-MIN_LONG = long(-2**63)
-MAX_LONG = long(2**63-1)
-
 
 class PrettyPrinter(object):
     """A PrettyPrinter for Fudge messages.

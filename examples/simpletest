@@ -24,7 +24,7 @@ from fudge.message import Message, Envelope
 from fudge import registry
 from fudge import types
 
-from fudge import utils
+from fudge.utils import render
 
 MY_NAME = u"Random Person"
 
@@ -49,7 +49,7 @@ def main():
     m.add(submsg, name=u"address")
     e = Envelope(m)
 
-    output = utils.PrettyPrinter()
+    output = render.PrettyPrinter()
 
     print "Message:"
     output.format(m)
