@@ -90,7 +90,6 @@ class PrettyPrinter(object):
         Return:
             Formatted string representation of the Field header
 
-
         """
         buf = StringIO()
 
