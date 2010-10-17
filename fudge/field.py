@@ -136,7 +136,7 @@ class Field:
         # And write it out
         writer.write(chr(prefix_byte))
         writer.write(codecs.enc_byte(self.type_.type_id))
-        if ordinal:
+        if ordinal is not None:
             writer.write(codecs.enc_short(ordinal))
         if name:
             assert len(name) <= utils.MAX_BYTE
