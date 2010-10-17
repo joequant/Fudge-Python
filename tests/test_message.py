@@ -25,6 +25,8 @@ import cStringIO
 from fudge.message import Envelope, Message
 from fudge.types import INDICATOR
 
+from nose.plugins.skip import SkipTest
+
 class messageTests(unittest.TestCase):
     def setUp(self):
         self._output = cStringIO.StringIO()
@@ -88,3 +90,18 @@ class messageTests(unittest.TestCase):
         e = Envelope(message)
         e.encode(self._output)
         self.assertOutput(encoded_env)
+
+    def test_simpletest_strings_submsg(self):
+        """Test we can/encode the address submsg bit
+        of simpletest"""
+        address = [u'123 Fake Street', u'Some City',
+                  u'P0S T4L', u'Country']
+
+        message = Message()
+        for line, ordinal in zip(address, range(len(address))):
+            message.add(line, ordinal=ordinal)
+
+        writer = cStringIO.StringIO()
+        message.encode(writer)
+        bytes = writer.getvalue()
+        m = Message.decode(bytes)

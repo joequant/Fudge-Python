@@ -36,6 +36,8 @@ STRING_FIELD = REGISTRY.type_by_id(types.STRING_TYPE_ID)
 INTARRAY_FIELD = REGISTRY.type_by_id(types.INTARRAY_TYPE_ID)
 FUDGEMSG_FIELD = REGISTRY.type_by_id(types.FUDGEMSG_TYPE_ID)
 
+BYTES = ''.join([ chr(x%256) for x in range(512)])
+
 class testField(unittest.TestCase):
     def setUp(self):
         pass
@@ -240,3 +242,36 @@ class testField(unittest.TestCase):
                 '8000' + # INDICATOR \
                 '200f038002f1' , f)
 
+    def test_fixedlen_bytearrays(self):
+        """Test we encode fixed length byte arrays"""
+
+        m = message.Message()
+        m.add(BYTES[:4])
+        m.add(BYTES[:8])
+        f = Field(FUDGEMSG_FIELD, None, None, m)
+        self.encodeEquals('200f10' + '8011' + BYTES[:4].encode('hex') + \
+                                     '8012' + BYTES[:8].encode('hex'), f)
+
+    def test_strings(self):
+        "Test we encode some strings correctly"
+        m = message.Message()
+        m.add(u'foo')
+        m.add(u'bar')
+        m.add(u'baz')
+
+        f = Field(FUDGEMSG_FIELD, None, None, m)
+        self.encodeEquals('200f12' + '200e03' + u'foo'.encode('hex') \
+                                   + '200e03' + u'bar'.encode('hex') \
+                                   + '200e03' + u'baz'.encode('hex'), f)
+
+    def test_strings_wth_ordinals(self):
+       "Test we encode some strings correctly when they have ordinals"
+       m = message.Message()
+       m.add(u'foo', ordinal=0)
+       m.add(u'bar', ordinal=2)
+       m.add(u'baz', ordinal=3)
+
+       f = Field(FUDGEMSG_FIELD, None, None, m)
+       self.encodeEquals('200f18' + '300e000003' + u'foo'.encode('hex') \
+                                  + '300e000203' + u'bar'.encode('hex') \
+                                  + '300e000303' + u'baz'.encode('hex'), f)

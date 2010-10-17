@@ -43,9 +43,6 @@ class TestSimpleTest(unittest.TestCase):
 
     def test_simpletest(self):
         """Equivalent to the examples/simpletest"""
-
-        raise SkipTest()
-
         MSG_TYPE = registry.DEFAULT_REGISTRY[types.FUDGEMSG_TYPE_ID]
         message = Message()
 
@@ -62,7 +59,7 @@ class TestSimpleTest(unittest.TestCase):
         e.encode(writer)
         bytes = writer.getvalue()
 
-        self.assertEquals(108, len(bytes))
+        self.assertEquals(110, len(bytes))
 
         returned = Envelope.decode(bytes)
 
@@ -70,6 +67,21 @@ class TestSimpleTest(unittest.TestCase):
         self.assertEquals(0, returned.directives)
 
         returned_message = returned.message
-        assertEquals(3, len(returned_message.fields))
+        self.assertEquals(3, len(returned_message.fields))
+
+        f0 = returned_message.fields[0]
+        self.assertEquals(u'name', f0.name)
+        self.assertEquals(None, f0.ordinal)
+        self.assertEquals(MY_NAME, f0.value)
+
+        f1 = returned_message.fields[1]
+        self.assertEquals(u'dob', f1.name)
+        self.assertEquals(4, f1.ordinal)
+        self.assertEquals(19801231L, f1.value)
+
+        submsg = returned_message.fields[2]
+        self.assertEquals(u'address', submsg.name)
+        self.assertEquals(None, submsg.ordinal)
+        self.assertEquals(4, len(submsg.value.fields))
 
 

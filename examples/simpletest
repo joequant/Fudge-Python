@@ -62,14 +62,15 @@ def main():
     print "Encoded:"
     dumper = hexdump.HexPrinter()
     dumper.format(bytes)
+    print ""
 
     f = Envelope.decode(bytes)
     print "Decoded Fudge message with schema version %d and %d fields"% \
-         (f.schema_version, len(f.fields))
+         (f.schema_version, len(m.fields))
     m = f.message
     print "Message:"
-    for field in m.fields:
-        print "  %s"%field
+    output.format(m)
+
 
 if __name__ == '__main__':
     main()
