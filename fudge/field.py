@@ -195,7 +195,7 @@ class Field:
 
         # value
         if fixedwidth:
-            value = field_type.decoder(encoded[pos:])
+            value = field_type.decoder(encoded[pos:pos+field_type.fixed_size])
             pos += field_type.fixed_size
         else:
             value_length = decode_value_length(encoded[pos:], variablewidth)
