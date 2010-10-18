@@ -25,6 +25,7 @@ import struct
 
 from fudge.types import INDICATOR
 
+from fudge import utils
 
 def enc_indicator(val=None):
     """Encode a Fudge Indicator Type.
@@ -49,6 +50,7 @@ def enc_short(val):
 
 def enc_int(val):
     """Encode a single signed int32"""
+    assert val >= utils.MIN_INT or val <= utils.MAX_INT
     return struct.pack("!l", val)
 
 def enc_long(val):

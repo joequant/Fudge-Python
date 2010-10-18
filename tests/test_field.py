@@ -115,9 +115,9 @@ class TestField(unittest.TestCase):
         self.assertEquals(3, f.size())
         self.encodeEquals('800201', f)
 
-        f = Field(INT_FIELD, None, None, 0x80000000)
+        f = Field(INT_FIELD, None, None, 0x0000beef)
         self.assertEquals(6, f.size())
-        self.encodeEquals('800480000000', f)
+        self.encodeEquals('80040000beef', f)
 
     def test_size_no_opts_variable(self):
         encoded = '200e03'+u'foo'.encode('hex')
@@ -142,8 +142,8 @@ class TestField(unittest.TestCase):
         self.assertEquals(0x01, res.value)
         self.assertEquals(0x01, res.ordinal)
 
-        f = Field(INT_FIELD, 0x02, None, 0x80000001)
-        self.encodeEquals('9004000280000001', f)
+        f = Field(INT_FIELD, 0x02, None, 0x0000beef)
+        self.encodeEquals('900400020000beef', f)
         self.assertEquals(8, f.size())
 
     def test_size_name(self):
