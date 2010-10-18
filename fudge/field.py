@@ -99,9 +99,9 @@ class Field:
         return self.type_.type_id == type_id
 
     def __repr__(self):
-        if self.name and not self.ordinal:
+        if self.name and self.ordinal is not None:
             return "Field[%s:%s-'%s']"% (self.name, self.type_, self.value)
-        elif self.name and self.ordinal:
+        elif self.name and self.ordinal is not None:
             return "Field[%s,%d:%s-'%s']"% (self.name, self.ordinal, \
                     self.type_, self.value)
         else:

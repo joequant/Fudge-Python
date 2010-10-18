@@ -38,7 +38,7 @@ FUDGEMSG_FIELD = REGISTRY.type_by_id(types.FUDGEMSG_TYPE_ID)
 
 BYTES = ''.join([ chr(x%256) for x in range(512)])
 
-class testField(unittest.TestCase):
+class TestField(unittest.TestCase):
     def setUp(self):
         pass
 
