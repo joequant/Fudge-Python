@@ -72,6 +72,17 @@ class FieldType(object):
         if self.is_variable_sized:
             assert self.calc_size
 
+    def name(self):
+        """Return the human friendly name of a Fudge Type.
+
+        Return:
+            The name of the type, if known, otherwise 'unknown(type_id)'
+           """
+        try:
+            return types.FUDGE_TYPE_NAMES[self.type_id]
+        except KeyError:
+            return 'unknown(%s)'% self.type_id
+
     def __repr__(self):
         return "FieldType[id=%r, classname=%r]"% (self.type_id, self.classname)
 

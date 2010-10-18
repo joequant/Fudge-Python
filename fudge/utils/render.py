@@ -26,11 +26,11 @@ from  cStringIO import StringIO
 from fudge import types
 
 def max_len(fields):
-    max_len = 0
+    mlen = 0
     for field in fields:
-        if len(field) > max_len:
-            max_len = len(field)
-    return max_len
+        if len(field) > mlen:
+            mlen = len(field)
+    return mlen
 
 class PrettyPrinter(object):
     """A PrettyPrinter for Fudge messages.
@@ -69,16 +69,16 @@ class PrettyPrinter(object):
             fieldspecs.append(fieldspec)
 
         max_fieldspec_width = max_len(fieldspecs)
-        max_typename_width = max_len([types.name_for_type(x.type_.type_id) for x in  message.fields])
+        typenames = [x.type_.name() for x in  message.fields]
+        max_typename_width = max_len(typenames)
 
-        for field, fieldspec, index in  zip(message.fields, fieldspecs, range(num_fields)) :
-            self._format_field(field, fieldspec, index, depth, \
+        for field, fieldspec in  zip(message.fields, fieldspecs) :
+            self._format_field(field, fieldspec, depth, \
                     max_fieldspec_width, max_typename_width)
 
-    def _format_field(self, field, fieldspec, index, depth, max_fs, max_tn):
+    def _format_field(self, field, fieldspec, depth, max_fs, max_tn):
         """Format a single field on a line"""
-        typename = types.name_for_type(field.type_.type_id)
-        #self._writer.write("{0:<{width}} {1:<{tn_width}} ".format(fieldspec, typename, width=max_fs, tn_width=max_tn) )
+        typename = field.type_.name()
         self._writer.write("%-*s %-*s "%(max_fs, fieldspec, max_tn, typename) )
         if field.is_type(types.FUDGEMSG_TYPE_ID):
             self._writer.write('\n')
@@ -117,7 +117,7 @@ class PrettyPrinter(object):
         if truncate > num_elements:
             truncate = num_elements
         self._writer.write('[')
-        self._writer.write(', '.join(map(lambda x : str(x), value[:truncate])))
+        self._writer.write(', '.join(str(x) for x in value[:truncate]))
         if truncate < num_elements:
             self._writer.write(" ... %d more"%(num_elements - truncate))
         self._writer.write(']')

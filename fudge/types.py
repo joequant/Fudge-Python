@@ -76,21 +76,6 @@ FUDGE_TYPE_NAMES =  {
     BYTEARRAY512_TYPE_ID : "byte[512]",
 }
 
-def name_for_type(type_id):
-    """Return the human friendly name of a Fudge Type.
-
-    Arguments:
-        type_id:  the ID of the Type
-
-    Return:
-        The name of the type, if known, otherwise 'unknown(type_id)'
-    """
-    try:
-        return FUDGE_TYPE_NAMES[type_id]
-    except KeyError:
-        return 'unknown(%s)'% type_id
-
-
 def size_unicode(arg):
     """Calculate the size of a unicode string"""
     return len(arg.encode('utf-8'))
