@@ -34,10 +34,10 @@ def enc_indicator(val=None):
 
 def enc_bool(val):
     """Encode a boolean as either a \0x00 or \0x01"""
-    return struct.pack('!?', val)
-    #if b:
-    #    return '\x01'
-    #return '\x00'
+    # No '?' decode format in py2.4
+    if val:
+        return '\x01'
+    return '\x00'
 
 def enc_byte(val):
     """encode a single unsignd byte"""
@@ -91,7 +91,11 @@ def dec_indicator(encoded):
 
 def dec_bool(encoded):
     """Decode a single boolean"""
-    return _unpack('!?', encoded)
+    # No '?' decode format in py2.4
+    if encoded[0] != '\x00':
+        return True
+    else: 
+        return False
 
 def dec_byte(encoded):
     """Decode a single unsigned byte"""

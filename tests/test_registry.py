@@ -79,7 +79,7 @@ class testRegistry(unittest.TestCase):
         self.assertEquals(self.INT_TYPE, self.reg.type_by_class(utils.MAX_BYTE))
         self.assertEquals(self.INT_TYPE, self.reg.type_by_class(utils.MAX_SHORT))
         self.assertEquals(self.INT_TYPE, self.reg.type_by_class(utils.MAX_INT))
-        self.assertEquals(self.LONG_TYPE, self.reg.type_by_class(utils.MAX_INT+1))
+        self.assertEquals(self.LONG_TYPE, self.reg.type_by_class(long(utils.MAX_INT + 1)))
 
     def test_narrow_int_byte(self):
         self.assertEquals(self.BYTE_TYPE, self.reg._narrow_int(0))

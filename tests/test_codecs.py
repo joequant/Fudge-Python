@@ -70,8 +70,8 @@ class codecsTests(unittest.TestCase):
         self.assertEquals(utils.MAX_LONG, dec_long(enc_long(utils.MAX_LONG)))
 
     def test_float(self): 
-        ONE_HEX = str(bytearray.fromhex(u'3f800000'))
-        TWO_HEX = str(bytearray.fromhex(u'40000000'))
+        ONE_HEX = str(u'3f800000'.decode('hex'))
+        TWO_HEX = str(u'40000000'.decode('hex'))
         
         self.assertEquals(ONE_HEX, enc_float(1.0)) 
         self.assertEquals(1.0, dec_float(ONE_HEX))
@@ -79,8 +79,8 @@ class codecsTests(unittest.TestCase):
         self.assertEquals(2.0, dec_float(enc_float(2.0)))
 
     def test_double(self): 
-        ONE_HEX = str(bytearray.fromhex(u'3ff0000000000000'))
-        TWO_HEX = str(bytearray.fromhex(u'4000000000000000'))
+        ONE_HEX = str(u'3ff0000000000000'.decode('hex'))
+        TWO_HEX = str(u'4000000000000000'.decode('hex'))
 
         self.assertEquals(ONE_HEX, enc_double(1.0)) 
         self.assertEquals(1.0, dec_double(ONE_HEX))

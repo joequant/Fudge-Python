@@ -25,6 +25,13 @@ from  cStringIO import StringIO
 
 from fudge import types
 
+def max_len(fields):
+    max_len = 0
+    for field in fields:
+        if len(field) > max_len:
+            max_len = len(field)
+    return max_len
+
 class PrettyPrinter(object):
     """A PrettyPrinter for Fudge messages.
 
@@ -61,8 +68,8 @@ class PrettyPrinter(object):
             fieldspec = self._get_fieldspec(field, index, depth)
             fieldspecs.append(fieldspec)
 
-        max_fieldspec_width = len(max(fieldspecs, key=str.__len__))
-        max_typename_width = len(max(map(lambda x : types.name_for_type(x.type_.type_id), message.fields), key=str.__len__))
+        max_fieldspec_width = max_len(fieldspecs)
+        max_typename_width = max_len([types.name_for_type(x.type_.type_id) for x in  message.fields])
 
         for field, fieldspec, index in  zip(message.fields, fieldspecs, range(num_fields)) :
             self._format_field(field, fieldspec, index, depth, \
@@ -71,7 +78,8 @@ class PrettyPrinter(object):
     def _format_field(self, field, fieldspec, index, depth, max_fs, max_tn):
         """Format a single field on a line"""
         typename = types.name_for_type(field.type_.type_id)
-        self._writer.write("{0:<{width}} {1:<{tn_width}} ".format(fieldspec, typename, width=max_fs, tn_width=max_tn) )
+        #self._writer.write("{0:<{width}} {1:<{tn_width}} ".format(fieldspec, typename, width=max_fs, tn_width=max_tn) )
+        self._writer.write("%-*s %-*s "%(max_fs, fieldspec, max_tn, typename) )
         if field.is_type(types.FUDGEMSG_TYPE_ID):
             self._writer.write('\n')
             self.format(field.value, depth + 1)
