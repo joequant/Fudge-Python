@@ -25,7 +25,8 @@ It does not yet support taxonomies.
 Licence
 -------
 
-  Copyright CERN, 2010.
+Copyright CERN, 2010.
+Copyright Bitquant Research Laboratories (Asia) Ltd., 2013.
 
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements. See the NOTICE file
