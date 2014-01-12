@@ -21,14 +21,14 @@
 
 import unittest
 
-from fudge.registry import *
-from fudge import types
-from fudge import utils
+from fudgemsg.registry import *
+from fudgemsg import types
+from fudgemsg import utils
 
 import uuid
 
 class TestClass(object):
-    """Used for testing `fudge.registry.fullname`"""
+    """Used for testing `fudgemsg.registry.fullname`"""
     pass
 
 class testRegistry(unittest.TestCase):

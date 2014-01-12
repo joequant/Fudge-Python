@@ -26,4 +26,4 @@ clean:
 	find . -name \*.pyc |xargs rm
 
 check:
-	pylint fudge
+	pylint fudgemsg

@@ -22,8 +22,8 @@
 import unittest
 import cStringIO
 
-from fudge.message import Envelope, Message
-from fudge.types import INDICATOR
+from fudgemsg.message import Envelope, Message
+from fudgemsg.types import INDICATOR
 
 from nose.plugins.skip import SkipTest
 

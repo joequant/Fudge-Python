@@ -48,8 +48,8 @@ import os
 import sys
 import getopt
 
-from fudge.message import Envelope, Message
-from fudge.utils import hexdump
+from fudgemsg.message import Envelope, Message
+from fudgemsg.utils import hexdump
 
 help_message = '''
 The help message goes here.

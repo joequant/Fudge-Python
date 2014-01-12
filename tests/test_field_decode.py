@@ -23,12 +23,12 @@
 import unittest
 import cStringIO
 
-from fudge import message
-from fudge.field import *
+from fudgemsg import message
+from fudgemsg.field import *
 
 from nose.plugins.skip import SkipTest
 
-from fudge import registry
+from fudgemsg import registry
 REGISTRY = registry.DEFAULT_REGISTRY
 FUDGEMSG_FIELD = REGISTRY.type_by_id(types.FUDGEMSG_TYPE_ID)
 

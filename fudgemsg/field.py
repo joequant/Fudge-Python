@@ -25,13 +25,13 @@ These are added to Fudge `Message`s in order to encode
 them, and are returned as the contents of decoded Fudge `Message`s
 
 """
-from fudge import codecs
-from fudge import prefix
-from fudge.registry import DEFAULT_REGISTRY
-from fudge import types
-from fudge import utils
+from fudgemsg import codecs
+from fudgemsg import prefix
+from fudgemsg.registry import DEFAULT_REGISTRY
+from fudgemsg import types
+from fudgemsg import utils
 
-import fudge # For message.Message
+import fudgemsg # For message.Message
 
 class Field:
     """A Concrete field suitable for including into a Fudge Message"""
@@ -202,7 +202,7 @@ class Field:
 
             pos += variablewidth
             if type_id == types.FUDGEMSG_TYPE_ID:
-                value = fudge.message.Message.decode(encoded[pos:pos+value_length], taxonomy)
+                value = fudgemsg.message.Message.decode(encoded[pos:pos+value_length], taxonomy)
             else:
                 value = field_type.decoder(encoded[pos:pos+value_length])
             pos += value_length

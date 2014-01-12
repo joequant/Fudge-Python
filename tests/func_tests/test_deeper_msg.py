@@ -23,11 +23,11 @@
 import unittest
 import cStringIO
 
-from fudge.message import Message, Envelope
-from fudge import registry
-from fudge import types
+from fudgemsg.message import Message, Envelope
+from fudgemsg import registry
+from fudgemsg import types
 
-from fudge import utils
+from fudgemsg import utils
 
 from nose.plugins.skip import SkipTest
 

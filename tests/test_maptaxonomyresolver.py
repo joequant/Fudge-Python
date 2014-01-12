@@ -21,8 +21,8 @@
 import unittest
 
 
-from fudge.taxonomy.mapresolver import *
-from fudge.taxonomy.map import Taxonomy
+from fudgemsg.taxonomy.mapresolver import *
+from fudgemsg.taxonomy.map import Taxonomy
 
 class TestMapTaxomomy(unittest.TestCase):
     def test_no_resolver(self):

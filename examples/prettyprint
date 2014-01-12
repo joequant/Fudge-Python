@@ -26,8 +26,8 @@ import os
 import sys
 import getopt
 
-from fudge.message import Envelope, Message
-from fudge.utils import render
+from fudgemsg.message import Envelope, Message
+from fudgemsg.utils import render
 
 help_message = '''
 The help message goes here.

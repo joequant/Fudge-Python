@@ -22,12 +22,12 @@
 import unittest
 import cStringIO
 
-from fudge import registry
+from fudgemsg import registry
 REGISTRY = registry.DEFAULT_REGISTRY
 
-from fudge import message
-from fudge.field import *
-from fudge.taxonomy.map import Taxonomy
+from fudgemsg import message
+from fudgemsg.field import *
+from fudgemsg.taxonomy.map import Taxonomy
 
 INDICATOR_FIELD = REGISTRY.type_by_id(types.INDICATOR_TYPE_ID)
 BYTE_FIELD = REGISTRY.type_by_id(types.BYTE_TYPE_ID)

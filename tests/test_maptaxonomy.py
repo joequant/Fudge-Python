@@ -22,7 +22,7 @@
 import unittest
 
 
-from fudge.taxonomy.map import *
+from fudgemsg.taxonomy.map import *
 
 class TestMapTaxomomy(unittest.TestCase):
 

@@ -19,9 +19,9 @@
 
 """A Registry, storing Fudge FieldTypes."""
 
-from fudge import codecs
-from fudge import types
-from fudge import utils
+from fudgemsg import codecs
+from fudgemsg import types
+from fudgemsg import utils
 
 class UnknownTypeError(Exception):
     """An Unknown Type has been used
@@ -102,7 +102,7 @@ class Registry(object):
         self.types_by_id = {}
         self.types_by_class = {}
 
-        self._add(FieldType(types.INDICATOR_TYPE_ID, 'fudge.types.Indicator', \
+        self._add(FieldType(types.INDICATOR_TYPE_ID, 'fudgemsg.types.Indicator', \
                 False, 0, \
                 codecs.enc_indicator, codecs.dec_indicator, lambda x : 0))
 
@@ -150,7 +150,7 @@ class Registry(object):
 
         # For FUDGEMSG, we shortcut the call to enc, dec
         self._add(FieldType(types.FUDGEMSG_TYPE_ID, \
-                'fudge.message.Message', True,  0, \
+                'fudgemsg.message.Message', True,  0, \
                 None, None, \
                 calc_size = lambda x, taxonomy : x.size(taxonomy=taxonomy)))
 

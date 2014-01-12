@@ -21,7 +21,7 @@
 
 """A native python implementation of the Fudge Messaging Protocol.
 
-See http://www.fudgemsg.org/display/FDG/Fudge+Messaging+Home for
+See http://www.fudgemsgmsg.org/display/FDG/Fudge+Messaging+Home for
 more details.
 
 """

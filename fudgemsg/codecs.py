@@ -23,9 +23,9 @@
 
 import struct
 
-from fudge.types import INDICATOR
+from fudgemsg.types import INDICATOR
 
-from fudge import utils
+from fudgemsg import utils
 
 def enc_indicator(val=None):
     """Encode a Fudge Indicator Type.

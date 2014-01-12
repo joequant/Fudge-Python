@@ -21,7 +21,7 @@
 
 import unittest
 
-from fudge.types import *
+from fudgemsg.types import *
 
 class testTypes(unittest.TestCase):
     def setUp(self):

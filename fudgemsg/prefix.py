@@ -19,7 +19,7 @@
 
 """Methods for dealing with Fudge Field Prefixes:
 
-<http://www.fudgemsg.org/display/FDG/Encoding+Specification#EncodingSpecification-FieldPrefix>
+<http://www.fudgemsgmsg.org/display/FDG/Encoding+Specification#EncodingSpecification-FieldPrefix>
 """
 
 def decode_prefix(byte):

@@ -20,10 +20,10 @@
 import unittest
 import cStringIO
  
-from fudge.types import INDICATOR
-from fudge.codecs import * 
+from fudgemsg.types import INDICATOR
+from fudgemsg.codecs import * 
 
-from fudge import utils
+from fudgemsg import utils
 
 class codecsTests(unittest.TestCase):
     def setUp(self):

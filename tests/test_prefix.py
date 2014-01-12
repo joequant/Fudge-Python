@@ -20,8 +20,8 @@
 
 import unittest
 
-from fudge.prefix import *
-from fudge import utils
+from fudgemsg.prefix import *
+from fudgemsg import utils
 
 class FieldPrefixTests(unittest.TestCase):
     def setUp(self):

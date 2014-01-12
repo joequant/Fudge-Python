@@ -21,8 +21,8 @@
 
 import struct
 
-from fudge.field import Field
-from fudge import registry
+from fudgemsg.field import Field
+from fudgemsg import registry
 
 HEADER_PACKING = "!BBhl"
 
