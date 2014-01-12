@@ -24,7 +24,7 @@ setup(
     version = '0.1',
     description = 'Fudge is a hierarchical, typesafe, binary, self-describing message encoding system.',
     license = 'APL2',
-    url = 'http://github.com/jamesc/Fudge-Python',
+    url = 'http://github.com/joequant/Fudge-Python',
     author = 'Joseph C Wang',
     author_email =  'joequant@gmail.com',
     packages = ['tests','fudgemsg'],
