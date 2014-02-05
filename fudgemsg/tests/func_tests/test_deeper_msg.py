@@ -94,7 +94,7 @@ class TestDeeperMsg(unittest.TestCase):
         e.encode(writer)
         bytes = writer.getvalue()
 
-        foo = open('tests/data/deeper_fudge_msg.dat', 'r')
+        foo = open('fudgemsg/tests/data/deeper_fudge_msg.dat', 'r')
         expected = foo.read()
         foo.close()
         self.assertEquals(len(expected), len(bytes))
@@ -106,7 +106,7 @@ class TestDeeperMsg(unittest.TestCase):
         Check they are the same.
         """
 
-        foo = open('tests/data/deeper_fudge_msg.dat', 'r')
+        foo = open('fudgemsg/tests/data/deeper_fudge_msg.dat', 'r')
         expected = foo.read()
         foo.close()
         e = Envelope.decode(expected)

@@ -148,4 +148,4 @@ class testRegistry(unittest.TestCase):
          """Check that the fullname stuff works for builtins"""
          self.assertEquals('str', fullname(str))
          self.assertEquals('long', fullname(long))
-         self.assertEquals('tests.test_registry.TestClass', fullname(TestClass))
+         self.assertEquals('fudgemsg.tests.test_registry.TestClass', fullname(TestClass))

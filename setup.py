@@ -17,7 +17,7 @@
 # under the License.
 #
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name = 'fudgemsg',
@@ -27,5 +27,6 @@ setup(
     url = 'http://github.com/joequant/Fudge-Python',
     author = 'Joseph C Wang',
     author_email =  'joequant@gmail.com',
-    packages = ['tests','fudgemsg'],
+    packages = find_packages(),
+    test_suite = 'nose.collector'
 )

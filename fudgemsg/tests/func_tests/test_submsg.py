@@ -21,7 +21,7 @@
 #
 
 
-"""Equiv to tests/data/subMsg.dat"""
+"""Equiv to fudgemsg/tests/data/subMsg.dat"""
 
 import unittest
 import cStringIO
@@ -55,14 +55,14 @@ class TestSubMsg(unittest.TestCase):
         e.encode(writer)
         bytes = writer.getvalue()
 
-        foo = open('tests/data/subMsg.dat', 'r')
+        foo = open('fudgemsg/tests/data/subMsg.dat', 'r')
         expected = foo.read()
         foo.close()
         self.assertEquals(len(expected), len(bytes))
         self.assertEquals(expected, bytes)
 
     def test_decode_submsg(self):
-        file = open('tests/data/subMsg.dat', 'r')
+        file = open('fudgemsg/tests/data/subMsg.dat', 'r')
         bytes = file.read()
 
         e = Envelope.decode(bytes)
