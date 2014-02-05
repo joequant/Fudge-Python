@@ -21,7 +21,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'fudgemsg',
-    version = '0.1',
+    version = '0.1.1',
     description = 'Fudge is a hierarchical, typesafe, binary, self-describing message encoding system.',
     license = 'APL2',
     url = 'http://github.com/joequant/Fudge-Python',
